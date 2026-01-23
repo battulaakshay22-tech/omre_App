@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../features/shell/shell_screen.dart';
+import '../../features/social/social_home_screen.dart';
+import '../../features/messenger/messenger_home_screen.dart';
+import '../../features/education/education_screen.dart';
+import '../../features/profile/profile_screen.dart';
+import '../../features/social/add_story_screen.dart';
+import '../../features/social/story_viewer_screen.dart';
+import '../../features/social/controllers/add_story_controller.dart';
+import '../../features/social/controllers/story_viewer_controller.dart';
+import '../../features/social/controllers/home_controller.dart';
+import '../../features/messenger/chat_detail_screen.dart';
+import '../../features/messenger/controllers/chat_detail_controller.dart';
+import '../../features/biz/biz_home_screen.dart';
+import '../services/state_providers.dart';
+
+class AppPages {
+  static const initial = '/';
+
+  static final routes = [
+    GetPage(
+      name: '/',
+      page: () => const ShellScreen(),
+      binding: ShellBinding(),
+    ),
+    GetPage(
+      name: '/add-story',
+      page: () => const AddStoryScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => AddStoryController());
+      }),
+    ),
+    GetPage(
+      name: '/story-viewer',
+      page: () => const StoryViewerScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => StoryViewerController());
+      }),
+    ),
+    GetPage(
+      name: '/chat-detail',
+      page: () => const ChatDetailScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ChatDetailController());
+      }),
+    ),
+  ];
+}
+
+class ShellBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => AppController());
+  }
+}
+
+class HomeContent extends GetView<AppController> {
+  const HomeContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      switch (controller.appMode) {
+        case AppMode.social:
+          return const SocialHomeScreen();
+        case AppMode.messenger:
+          return const MessengerHomeScreen();
+        case AppMode.education:
+          return const EducationScreen();
+        case AppMode.biz:
+          return const BizHomeScreen();
+        case AppMode.link:
+          return const Center(child: Text('Link Module - Coming Soon'));
+        case AppMode.studio:
+          return const Center(child: Text('Studio Module - Coming Soon'));
+        case AppMode.news:
+          return const Center(child: Text('News Module - Coming Soon'));
+        case AppMode.video:
+          return const Center(child: Text('Video Module - Coming Soon'));
+        case AppMode.orbit:
+          return const Center(child: Text('Orbit Module - Coming Soon'));
+      }
+    });
+  }
+}

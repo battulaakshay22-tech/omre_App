@@ -1,0 +1,14 @@
+
+import 'package:flutter/material.dart';
+
+class BirthdayScreen extends StatelessWidget {
+  const BirthdayScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Birthday')),
+      body: const Center(child: Text('Birthday Screen')),
+    );
+  }
+}
