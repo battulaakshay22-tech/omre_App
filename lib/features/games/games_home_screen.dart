@@ -214,7 +214,7 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     image: DecorationImage(
-                      image: NetworkImage(featured['image'] as String), 
+                      image: AssetImage(featured['image'] as String), 
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -261,7 +261,7 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    CircleAvatar(radius: 12, backgroundImage: NetworkImage(featured['avatar'] as String)),
+                                    CircleAvatar(radius: 12, backgroundImage: AssetImage(featured['avatar'] as String)),
                                     const SizedBox(width: 8),
                                     Text(featured['streamer'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                                     const SizedBox(width: 8),
@@ -400,7 +400,7 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(image, height: 120, width: double.infinity, fit: BoxFit.cover),
+            child: Image.asset(image, height: 120, width: double.infinity, fit: BoxFit.cover),
           ),
           const SizedBox(height: 12),
           Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: theme.textTheme.bodyLarge?.color), maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -432,7 +432,7 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
         borderRadius: BorderRadius.circular(16),
         color: Colors.black,
         image: DecorationImage(
-          image: NetworkImage(clip['image']),
+          image: AssetImage(clip['image']),
           fit: BoxFit.cover,
           opacity: 0.7,
         ),

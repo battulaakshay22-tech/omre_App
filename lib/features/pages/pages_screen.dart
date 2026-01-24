@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
+
 
 class PagesScreen extends StatelessWidget {
   const PagesScreen({super.key});
@@ -38,14 +40,14 @@ class PagesScreen extends StatelessWidget {
             'Tech Insider',
             'Technology & News',
             '125K',
-            'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
+            AppAssets.post1,
             isDark,
           ),
           _buildPageItem(
             'Flutter Devs',
             'Community',
             '45K',
-            'https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=1974&auto=format&fit=crop',
+            AppAssets.post2,
             isDark,
           ),
           const SizedBox(height: 24),
@@ -58,7 +60,7 @@ class PagesScreen extends StatelessWidget {
             'Startup Grind',
             'Business',
             '89K',
-            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2664&auto=format&fit=crop',
+            AppAssets.post3,
             isDark,
             isSuggested: true,
           ),
@@ -66,7 +68,7 @@ class PagesScreen extends StatelessWidget {
             'Digital Art Gallery',
             'Art & Design',
             '230K',
-            'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=2070&auto=format&fit=crop',
+            AppAssets.post4,
             isDark,
             isSuggested: true,
           ),
@@ -74,7 +76,7 @@ class PagesScreen extends StatelessWidget {
             'Global Traveler',
             'Travel',
             '560K',
-            'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop',
+            AppAssets.post5,
             isDark,
             isSuggested: true,
           ),
@@ -144,7 +146,7 @@ class PagesScreen extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
+            child: Image.asset(
               imageUrl,
               width: 64,
               height: 64,

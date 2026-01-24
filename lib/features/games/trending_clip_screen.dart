@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
+
 import 'package:video_player/video_player.dart';
 import '../shorts/widgets/shorts_comments_sheet.dart';
 import '../shorts/widgets/shorts_share_sheet.dart';
@@ -21,8 +23,7 @@ class _TrendingClipScreenState extends State<TrendingClipScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(
-        Uri.parse('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'))
+    _controller = VideoPlayerController.asset(AppAssets.sampleVideo)
       ..initialize().then((_) {
         setState(() {});
         _controller.play();

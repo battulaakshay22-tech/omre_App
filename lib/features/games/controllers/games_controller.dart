@@ -1,4 +1,7 @@
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
+
+
 import 'package:flutter/material.dart';
 import '../live_channel_screen.dart';
 import '../trending_clip_screen.dart';
@@ -8,10 +11,10 @@ class GamesController extends GetxController {
   final featuredStream = {
     'title': 'Grand Finals: Neon Vanguard Championship',
     'streamer': 'OfficialOmreEsports',
-    'image': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2670&auto=format&fit=crop',
-    'category': 'Esports',
-    'viewers': '45k Viewers',
-    'avatar': 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=1780&auto=format&fit=crop',
+      'image': AppAssets.getRandomPost(),
+      'name': 'Elden Ring',
+      'views': '296k',
+      'avatar': AppAssets.getRandomAvatar(),
     'isLive': true
   }.obs;
 
@@ -19,22 +22,22 @@ class GamesController extends GetxController {
     {
       'title': 'Ranked Grind into Masters',
       'streamer': 'KaiCenat • Neon Vanguard',
-       'image': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2671&auto=format&fit=crop',
-      'avatar': 'https://i.pravatar.cc/150?u=kai',
+       'image': AppAssets.post1,
+      'avatar': AppAssets.avatar1,
       'tags': ['Competitive', '45k'],
     },
     {
       'title': 'Chill Vibes & LoFi',
       'streamer': 'Pokimane • Just Chatting',
-      'image': 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2670&auto=format&fit=crop',
-      'avatar': 'https://i.pravatar.cc/150?u=poki',
+      'image': AppAssets.post2,
+      'avatar': AppAssets.avatar2,
       'tags': ['Chill', '22k'],
     },
      {
       'title': 'Speedrunning Elden Ring',
       'streamer': 'SpeedRunnerPro • Elden Ring',
-      'image': 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=2670&auto=format&fit=crop',
-      'avatar': 'https://i.pravatar.cc/150?u=speed',
+      'image': AppAssets.post3,
+      'avatar': AppAssets.avatar3,
       'tags': ['Speedrun', '15k'],
     },
   ].obs;
@@ -44,19 +47,19 @@ class GamesController extends GetxController {
       'title': 'Incredible Play!',
       'duration': '0:24',
       'creator': 'Ninja',
-      'image': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop',
+      'image': AppAssets.thumbnail1,
     },
     {
        'title': 'Funny Moment',
       'duration': '0:45',
       'creator': 'TimTheTatman',
-      'image': 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2574&auto=format&fit=crop',
+      'image': AppAssets.thumbnail2,
     },
     {
        'title': 'Epic Fail',
       'duration': '0:30',
       'creator': 'Shroud',
-      'image': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?q=80&w=2574&auto=format&fit=crop',
+      'image': AppAssets.thumbnail3,
     },
   ].obs;
 

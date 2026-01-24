@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:animations/animations.dart';
 import '../../core/services/state_providers.dart';
 import '../../core/theme/palette.dart';
@@ -178,7 +180,7 @@ class ShellScreen extends GetView<AppController> {
                   onTap: () => _onItemTapped(3), // Go to Profile
                   child: const CircleAvatar(
                     radius: 16,
-                    backgroundImage: NetworkImage('https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?q=80&w=2667&auto=format&fit=crop'),
+                    backgroundImage: AssetImage(AppAssets.avatar1),
                   ),
                 ),
               ),
@@ -412,7 +414,7 @@ class ShellScreen extends GetView<AppController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset(
-                    isDark ? 'assets/logo/omre_dark_mode.png' : 'assets/logo/omre_light_mode.png',
+                    isDark ? AppAssets.logoDark : AppAssets.logoLight,
                     height: 40,
                   ),
                   IconButton(

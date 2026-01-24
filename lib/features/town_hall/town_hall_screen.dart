@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
+
 
 class TownHallScreen extends StatelessWidget {
   const TownHallScreen({super.key});
@@ -38,7 +40,7 @@ class TownHallScreen extends StatelessWidget {
                     'City Infrastructure Plan 2026',
                     'Mayor\'s Office',
                     '1.2K participating',
-                    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop',
+                    AppAssets.post1,
                     isDark,
                     isLive: true,
                   ),
@@ -46,7 +48,7 @@ class TownHallScreen extends StatelessWidget {
                     'School District Budget Review',
                     'Education Board',
                     '450 participating',
-                    'https://images.unsplash.com/photo-1577896336183-5248d57d5ab8?q=80&w=2070&auto=format&fit=crop',
+                    AppAssets.post2,
                     isDark,
                     isLive: false,
                   ),
@@ -129,7 +131,7 @@ class TownHallScreen extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(
+                child: Image.asset(
                   imageUrl,
                   height: 150,
                   width: double.infinity,

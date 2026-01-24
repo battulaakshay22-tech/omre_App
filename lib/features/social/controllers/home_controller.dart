@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import '../models/social_models.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -19,38 +20,38 @@ class HomeController extends GetxController {
     stories.assignAll([
       UserStoryGroup(
         username: 'Your Story',
-        avatarUrl: 'https://i.pravatar.cc/150?u=me',
+        avatarUrl: AppAssets.avatar1,
         stories: [],
       ),
       UserStoryGroup(
         username: 'marcus_dev',
-        avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
+        avatarUrl: AppAssets.avatar2,
         stories: [
           StoryModel(
             id: 's1',
             username: 'marcus_dev',
-            avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
-            imageUrl: 'https://picsum.photos/seed/story1/1080/1920',
+            avatarUrl: AppAssets.avatar2,
+            imageUrl: AppAssets.post1,
             timestamp: DateTime.now().subtract(const Duration(hours: 2)),
           ),
         ],
       ),
       UserStoryGroup(
         username: 'elena_design',
-        avatarUrl: 'https://i.pravatar.cc/150?u=elena',
+        avatarUrl: AppAssets.avatar3,
         stories: [
           StoryModel(
             id: 's2',
             username: 'elena_design',
-            avatarUrl: 'https://i.pravatar.cc/150?u=elena',
-            imageUrl: 'https://picsum.photos/seed/story2/1080/1920',
+            avatarUrl: AppAssets.avatar3,
+            imageUrl: AppAssets.post2,
             timestamp: DateTime.now().subtract(const Duration(hours: 5)),
           ),
           StoryModel(
             id: 's3',
             username: 'elena_design',
-            avatarUrl: 'https://i.pravatar.cc/150?u=elena',
-            imageUrl: 'https://picsum.photos/seed/story3/1080/1920',
+            avatarUrl: AppAssets.avatar3,
+            imageUrl: AppAssets.post3,
             timestamp: DateTime.now().subtract(const Duration(hours: 1)),
           ),
         ],
@@ -62,8 +63,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p1',
         username: 'alex_r',
-        avatarUrl: 'https://i.pravatar.cc/150?u=1',
-        imageUrl: 'https://picsum.photos/seed/p1/600/600',
+        avatarUrl: AppAssets.avatar1,
+        imageUrl: AppAssets.post1,
         caption: 'Building the future of mobile apps with OMRE! 🚀 #flutter #getx',
         likes: 124,
         timestamp: '1h ago',
@@ -71,8 +72,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p2',
         username: 'sarah_j',
-        avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
-        imageUrl: 'https://picsum.photos/seed/p2/600/600',
+        avatarUrl: AppAssets.avatar2,
+        imageUrl: AppAssets.post2,
         caption: 'Beautiful morning vibes from the mountains ⛰️✨',
         likes: 89,
         timestamp: '3h ago',
@@ -80,8 +81,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p3',
         username: 'tech_insider',
-        avatarUrl: 'https://i.pravatar.cc/150?u=tech',
-        imageUrl: 'https://picsum.photos/seed/p3/600/600',
+        avatarUrl: AppAssets.avatar3,
+        imageUrl: AppAssets.post3,
         caption: 'Sustainable energy solutions are taking over the market. What do you think?',
         likes: 245,
         timestamp: '5h ago',
@@ -89,8 +90,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p4',
         username: 'marcus_dev',
-        avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
-        imageUrl: 'https://picsum.photos/seed/p4/600/600',
+        avatarUrl: AppAssets.avatar4,
+        imageUrl: AppAssets.post4,
         caption: 'Just landed in Tokyo! The tech scene here is insane 🇯🇵💻 #travel #tech',
         likes: 15,
         timestamp: '10m ago',
@@ -98,8 +99,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p5',
         username: 'elena_design',
-        avatarUrl: 'https://i.pravatar.cc/150?u=elena',
-        imageUrl: 'https://picsum.photos/seed/p5/600/600',
+        avatarUrl: AppAssets.avatar5,
+        imageUrl: AppAssets.post5,
         caption: 'New UI kit for OMRE is almost ready. Sleek, dark and premium! 🔥 #uidesign',
         likes: 312,
         timestamp: '30m ago',
@@ -107,8 +108,8 @@ class HomeController extends GetxController {
       PostModel(
         id: 'p6',
         username: 'flutter_fan',
-        avatarUrl: 'https://i.pravatar.cc/150?u=flutter',
-        imageUrl: 'https://picsum.photos/seed/p6/600/600',
+        avatarUrl: AppAssets.getRandomAvatar(),
+        imageUrl: AppAssets.getRandomPost(),
         caption: 'Can we appreciate how smooth Flutter animations are? OMRE is a prime example!',
         likes: 56,
         timestamp: '2h ago',
@@ -199,10 +200,10 @@ class HomeController extends GetxController {
     final newPost = PostModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       username: 'omre_user', // Current user
-      avatarUrl: 'https://i.pravatar.cc/150?u=me',
+      avatarUrl: AppAssets.avatar1,
       imageUrl: selectedImage.value != null 
-          ? 'https://picsum.photos/seed/${DateTime.now().millisecondsSinceEpoch}/600/600' // Placeholder for local file
-          : 'https://picsum.photos/seed/${DateTime.now().millisecondsSinceEpoch}/600/600',
+          ? AppAssets.post1 // Placeholder for local file
+          : AppAssets.post1,
       caption: postTextController.text + (selectedFeeling.value != null ? ' - feeling ${selectedFeeling.value}' : ''),
       timestamp: 'Just now',
       likes: 0,

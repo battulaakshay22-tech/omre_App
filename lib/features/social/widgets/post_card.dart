@@ -38,7 +38,7 @@ class PostCard extends StatelessWidget {
                     )),
                     child: CircleAvatar(
                       radius: 18,
-                      backgroundImage: NetworkImage(post.avatarUrl),
+                      backgroundImage: AssetImage(post.avatarUrl),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -74,16 +74,9 @@ class PostCard extends StatelessWidget {
               aspectRatio: 1,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(0),
-                child: Image.network(
+                child: Image.asset(
                   post.imageUrl,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
-                    );
-                  },
                 ),
               ),
             ),

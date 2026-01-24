@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
 
 class MoviesScreen extends StatelessWidget {
@@ -57,9 +58,9 @@ class MoviesScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               image: DecorationImage(
-                image: NetworkImage(index == 0 
-                  ? 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925&auto=format&fit=crop' 
-                  : 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop'),
+                image: AssetImage(index == 0 
+                  ? AppAssets.cover1
+                  : AppAssets.cover2),
                 fit: BoxFit.cover,
               ),
             ),
@@ -142,10 +143,10 @@ class MoviesScreen extends StatelessWidget {
 
   Widget _buildMovieRow({bool reverse = false}) {
     final images = [
-      'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1974&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=2070&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?q=80&w=2066&auto=format&fit=crop',
+      AppAssets.cover1,
+      AppAssets.cover2,
+      AppAssets.cover3,
+      AppAssets.post1,
     ];
     if (reverse) images.reversed.toList();
 
@@ -162,7 +163,7 @@ class MoviesScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: DecorationImage(
-                image: NetworkImage(images[index]),
+                image: AssetImage(images[index]),
                 fit: BoxFit.cover,
               ),
             ),

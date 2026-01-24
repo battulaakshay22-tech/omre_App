@@ -53,7 +53,11 @@ class _ShortsPageItemState extends State<ShortsPageItem> {
   }
 
   Future<void> _initializeController() async {
-    _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.short.videoUrl));
+    if (widget.short.videoUrl.startsWith('http')) {
+      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.short.videoUrl));
+    } else {
+      _videoController = VideoPlayerController.asset(widget.short.videoUrl);
+    }
     await _videoController.initialize();
     _videoController.setLooping(true);
     if (mounted) {
@@ -220,7 +224,9 @@ class _ShortsPageItemState extends State<ShortsPageItem> {
                       children: [
                         CircleAvatar(
                           radius: 20,
-                          backgroundImage: NetworkImage(widget.short.creatorAvatar),
+                          backgroundImage: widget.short.creatorAvatar.startsWith('http')
+                              ? NetworkImage(widget.short.creatorAvatar)
+                              : AssetImage(widget.short.creatorAvatar) as ImageProvider,
                         ),
                         const SizedBox(width: 12),
                         Text(

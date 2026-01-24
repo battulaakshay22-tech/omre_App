@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
+
 
 class FriendsScreen extends StatelessWidget {
   const FriendsScreen({super.key});
@@ -34,12 +36,12 @@ class FriendsScreen extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
           ),
           const SizedBox(height: 16),
-          _buildFriendItem('Alice Cooper', 'Online', 'https://i.pravatar.cc/150?u=alice', isDark, isOnline: true),
-          _buildFriendItem('Bob Smith', 'Last seen 2h ago', 'https://i.pravatar.cc/150?u=bob', isDark),
-          _buildFriendItem('Charlie Brown', 'Online', 'https://i.pravatar.cc/150?u=charlie', isDark, isOnline: true),
-          _buildFriendItem('Diana Prince', 'Last seen yesterday', 'https://i.pravatar.cc/150?u=diana', isDark),
-          _buildFriendItem('Evan Wright', 'Online', 'https://i.pravatar.cc/150?u=evan', isDark, isOnline: true),
-          _buildFriendItem('Fiona Gallagher', 'Last seen 4h ago', 'https://i.pravatar.cc/150?u=fiona', isDark),
+          _buildFriendItem('Alice Cooper', 'Online', AppAssets.avatar1, isDark, isOnline: true),
+          _buildFriendItem('Bob Smith', 'Last seen 2h ago', AppAssets.avatar2, isDark),
+          _buildFriendItem('Charlie Brown', 'Online', AppAssets.avatar3, isDark, isOnline: true),
+          _buildFriendItem('Diana Prince', 'Last seen yesterday', AppAssets.avatar4, isDark),
+          _buildFriendItem('Evan Wright', 'Online', AppAssets.avatar5, isDark, isOnline: true),
+          _buildFriendItem('Fiona Gallagher', 'Last seen 4h ago', AppAssets.avatar1, isDark),
         ],
       ),
     );
@@ -73,7 +75,7 @@ class FriendsScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const CircleAvatar(radius: 24, backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=request')),
+              CircleAvatar(radius: 24, backgroundImage: AssetImage(AppAssets.avatar2)),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -110,7 +112,7 @@ class FriendsScreen extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundImage: NetworkImage(imageUrl),
+            backgroundImage: AssetImage(imageUrl),
           ),
           if (isOnline)
             Positioned(

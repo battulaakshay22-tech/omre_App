@@ -62,7 +62,7 @@ class StoryTray extends GetView<HomeController> {
                           ),
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage: NetworkImage(storyGroup.avatarUrl),
+                            backgroundImage: AssetImage(storyGroup.avatarUrl),
                           ),
                         ),
                       ),

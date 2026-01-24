@@ -103,7 +103,7 @@ class NotificationsScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: NetworkImage(notification.avatarUrl),
+                  backgroundImage: AssetImage(notification.avatarUrl),
                   backgroundColor: Colors.grey[800],
                 ),
                 Positioned(

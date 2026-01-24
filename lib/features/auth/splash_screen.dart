@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -47,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: ScaleTransition(
             scale: _animation,
             child: Image.asset(
-              'assets/logo_light_mode.jpg',
+              AppAssets.logoLight,
               width: 200,
               height: 200,
             ),

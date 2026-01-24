@@ -1,4 +1,7 @@
+import 'package:omre/core/constants/app_assets.dart';
 import 'package:flutter/material.dart';
+
+
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -24,8 +27,7 @@ class _LiveChannelScreenState extends State<LiveChannelScreen> {
   }
 
   Future<void> _initializePlayer() async {
-    _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'));
+    _videoPlayerController = VideoPlayerController.asset(AppAssets.sampleVideo);
     await _videoPlayerController.initialize();
     setState(() {
       _chewieController = ChewieController(
@@ -108,7 +110,7 @@ class _LiveChannelScreenState extends State<LiveChannelScreen> {
                         children: [
                           CircleAvatar(
                             radius: 20,
-                            backgroundImage: NetworkImage(widget.channel['avatar'] ?? 'https://picsum.photos/seed/streamer/200'),
+                            backgroundImage: AssetImage(widget.channel['avatar'] ?? AppAssets.avatar1),
                           ),
                           const SizedBox(width: 12),
                           Expanded(

@@ -30,7 +30,7 @@ class ChatListItem extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 28,
-                  backgroundImage: NetworkImage(chat.avatarUrl),
+                  backgroundImage: AssetImage(chat.avatarUrl),
                   backgroundColor: Colors.grey[800],
                 ),
                 if (isOnline)

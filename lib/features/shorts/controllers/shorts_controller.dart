@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_assets.dart';
 
 class ShortModel {
   final String id;
@@ -29,7 +30,7 @@ class ShortsController extends GetxController {
   final shorts = <ShortModel>[
     ShortModel(
       id: '1',
-      videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+      videoUrl: AppAssets.sampleVideo,
       creatorName: 'Flutter Dev',
       creatorHandle: '@flutter_dev',
       creatorAvatar: 'https://i.pravatar.cc/150?u=flutter',

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:omre/core/constants/app_assets.dart';
 
 enum NotificationType {
   like,
@@ -26,7 +27,7 @@ class NotificationsController extends GetxController {
         username: 'Sarah Jenkins',
         message: 'sent you a friend request.',
         time: '2h ago',
-        avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
+        avatarUrl: AppAssets.avatar1,
         isRead: false,
       ),
       NotificationItem(
@@ -35,7 +36,7 @@ class NotificationsController extends GetxController {
         username: 'Marcus Chen',
         message: 'liked your post.',
         time: '4h ago',
-        avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
+        avatarUrl: AppAssets.avatar2,
         isRead: false,
         contentPreview: 'Hey everyone, check out my new project!',
       ),
@@ -45,7 +46,7 @@ class NotificationsController extends GetxController {
         username: 'Elena Rodriguez',
         message: 'commented on your photo: "Wow, amazing shot! 🔥"',
         time: '6h ago',
-        avatarUrl: 'https://i.pravatar.cc/150?u=elena',
+        avatarUrl: AppAssets.avatar3,
         isRead: true,
       ),
       NotificationItem(
@@ -54,7 +55,7 @@ class NotificationsController extends GetxController {
         username: 'Tech Insider',
         message: 'mentioned you in a post: "Highly recommending @alexj_design for the project!"',
         time: '1d ago',
-        avatarUrl: 'https://i.pravatar.cc/150?u=tech',
+        avatarUrl: AppAssets.avatar4,
         isRead: true,
       ),
       NotificationItem(
@@ -63,7 +64,7 @@ class NotificationsController extends GetxController {
         username: 'Flutter Devs',
         message: 'invited you to join their group.',
         time: '1d ago',
-        avatarUrl: 'https://i.pravatar.cc/150?u=flutter',
+        avatarUrl: AppAssets.avatar5,
         isRead: true,
       ),
     ]);
