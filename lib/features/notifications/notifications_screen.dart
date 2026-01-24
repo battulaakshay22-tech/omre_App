@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/theme/palette.dart';
+import 'notifications_controller.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -10,11 +11,15 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final controller = Get.put(NotificationsController());
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Notifications', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          'Notifications', 
+          style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)
+        ),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
@@ -23,93 +28,72 @@ class NotificationsScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Get.snackbar('Notifications', 'All notifications marked as read.');
-            },
+            onPressed: controller.markAllAsRead,
             child: const Text('Mark all as read', style: TextStyle(color: AppPalette.accentBlue)),
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          _buildSectionHeader('Today'),
-          _buildNotificationItem(
-            type: NotificationType.friendRequest,
-            username: 'Sarah Jenkins',
-            message: 'sent you a friend request.',
-            time: '2h ago',
-            avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
-            isRead: false,
-          ),
-          _buildNotificationItem(
-            type: NotificationType.like,
-            username: 'Marcus Chen',
-            message: 'liked your post.',
-            time: '4h ago',
-            avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
-            isRead: false,
-            contentPreview: 'Hey everyone, check out my new project!',
-          ),
-          _buildNotificationItem(
-            type: NotificationType.comment,
-            username: 'Elena Rodriguez',
-            message: 'commented on your photo: "Wow, amazing shot! 🔥"',
-            time: '6h ago',
-            avatarUrl: 'https://i.pravatar.cc/150?u=elena',
-            isRead: true,
-          ),
-          
-          _buildSectionHeader('Yesterday'),
-          _buildNotificationItem(
-            type: NotificationType.mention,
-            username: 'Tech Insider',
-            message: 'mentioned you in a post: "Highly recommending @alexj_design for the project!"',
-            time: '1d ago',
-            avatarUrl: 'https://i.pravatar.cc/150?u=tech',
-            isRead: true,
-          ),
-          _buildNotificationItem(
-            type: NotificationType.groupInvite,
-            username: 'Flutter Devs',
-            message: 'invited you to join their group.',
-            time: '1d ago',
-            avatarUrl: 'https://i.pravatar.cc/150?u=flutter',
-            isRead: true,
-          ),
-        ],
-      ),
+      body: Obx(() {
+        if (controller.notifications.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.notifications_off_outlined, size: 64, color: isDark ? Colors.white24 : Colors.grey[300]),
+                const SizedBox(height: 16),
+                Text(
+                  'No notifications yet',
+                   style: TextStyle(color: theme.hintColor, fontSize: 16),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: controller.notifications.length,
+          itemBuilder: (context, index) {
+            final notification = controller.notifications[index];
+            return Dismissible(
+              key: Key(notification.id),
+              direction: DismissDirection.endToStart,
+              onDismissed: (_) => controller.removeNotification(notification.id),
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 20),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              child: _buildNotificationItem(
+                context,
+                notification,
+                controller,
+                isDark,
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNotificationItem({
-    required NotificationType type,
-    required String username,
-    required String message,
-    required String time,
-    required String avatarUrl,
-    bool isRead = true,
-    String? contentPreview,
-  }) {
+  Widget _buildNotificationItem(
+    BuildContext context,
+    NotificationItem notification,
+    NotificationsController controller,
+    bool isDark,
+  ) {
+    final theme = Theme.of(context);
+    
     return InkWell(
       onTap: () {
-        Get.snackbar('Notification', 'Viewing details for this notification...');
+        controller.markAsRead(notification.id);
+        // Navigate or show details
       },
       child: Container(
-        color: isRead ? Colors.transparent : AppPalette.accentBlue.withOpacity(0.05),
+        color: notification.isRead 
+            ? Colors.transparent 
+            : (isDark ? AppPalette.accentBlue.withOpacity(0.1) : AppPalette.accentBlue.withOpacity(0.05)),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +103,8 @@ class NotificationsScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: NetworkImage(avatarUrl),
+                  backgroundImage: NetworkImage(notification.avatarUrl),
+                  backgroundColor: Colors.grey[800],
                 ),
                 Positioned(
                   bottom: 0,
@@ -127,11 +112,11 @@ class NotificationsScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: _getIconColor(type),
+                      color: _getIconColor(notification.type),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: isDark ? Colors.black : Colors.white, width: 2),
                     ),
-                    child: Icon(_getIcon(type), size: 10, color: Colors.white),
+                    child: Icon(_getIcon(notification.type), size: 10, color: Colors.white),
                   ),
                 ),
               ],
@@ -145,14 +130,14 @@ class NotificationsScreen extends StatelessWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                      style: TextStyle(fontSize: 14, color: theme.textTheme.bodyLarge?.color),
                       children: [
                         TextSpan(
-                          text: username,
+                          text: notification.username,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const TextSpan(text: ' '),
-                        TextSpan(text: message),
+                        TextSpan(text: notification.message),
                       ],
                     ),
                   ),
@@ -160,10 +145,10 @@ class NotificationsScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        time,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        notification.time,
+                        style: TextStyle(fontSize: 12, color: theme.hintColor),
                       ),
-                      if (!isRead) ...[
+                      if (!notification.isRead) ...[
                         const SizedBox(width: 8),
                         Container(
                           width: 6,
@@ -176,59 +161,49 @@ class NotificationsScreen extends StatelessWidget {
                       ],
                     ],
                   ),
-                  if (type == NotificationType.friendRequest) ...[
+                  if (notification.type == NotificationType.friendRequest) ...[
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            Get.snackbar(
-                              'Success', 
-                              'Friend request from $username accepted!',
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          },
+                          onPressed: () => controller.acceptRequest(notification.id, notification.username),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppPalette.accentBlue,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                            minimumSize: const Size(0, 32),
                           ),
-                          child: const Text('Accept'),
+                          child: const Text('Accept', style: TextStyle(fontSize: 13)),
                         ),
                         const SizedBox(width: 8),
                         OutlinedButton(
-                          onPressed: () {
-                            Get.snackbar(
-                              'Removed', 
-                              'Friend request from $username declined.',
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          },
+                          onPressed: () => controller.declineRequest(notification.id, notification.username),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.grey[700],
-                            side: BorderSide(color: Colors.grey[300]!),
+                            foregroundColor: theme.textTheme.bodyMedium?.color,
+                            side: BorderSide(color: isDark ? Colors.white24 : Colors.grey[300]!),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                            minimumSize: const Size(0, 32),
                           ),
-                          child: const Text('Decline'),
+                          child: const Text('Decline', style: TextStyle(fontSize: 13)),
                         ),
                       ],
                     ),
                   ],
-                  if (contentPreview != null) ...[
+                  if (notification.contentPreview != null) ...[
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: isDark ? Colors.grey[800] : Colors.grey[100],
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
+                        border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
                       ),
                       child: Text(
-                        contentPreview,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[700], fontStyle: FontStyle.italic),
+                        notification.contentPreview!,
+                        style: TextStyle(fontSize: 12, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8), fontStyle: FontStyle.italic),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -262,12 +237,4 @@ class NotificationsScreen extends StatelessWidget {
       case NotificationType.groupInvite: return Colors.purple;
     }
   }
-}
-
-enum NotificationType {
-  like,
-  comment,
-  friendRequest,
-  mention,
-  groupInvite,
 }

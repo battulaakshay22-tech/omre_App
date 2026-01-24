@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/theme/palette.dart';
 import 'package:intl/intl.dart';
+import 'gig_detail_screen.dart';
+import 'category_services_screen.dart';
 
 // --- Models ---
 class CategoryModel {
@@ -217,6 +219,16 @@ class JobsController extends GetxController {
     );
   }
 
+  final marketplaceSearchQuery = ''.obs;
+
+  List<GigModel> get filteredGigs {
+    if (marketplaceSearchQuery.value.isEmpty) return trendingGigs;
+    return trendingGigs.where((gig) => 
+      gig.title.toLowerCase().contains(marketplaceSearchQuery.value.toLowerCase()) ||
+      gig.sellerName.toLowerCase().contains(marketplaceSearchQuery.value.toLowerCase())
+    ).toList();
+  }
+
   @override
   void onClose() {
     searchController.dispose();
@@ -294,7 +306,7 @@ class JobsScreen extends StatelessWidget {
             // Content
             Expanded(
               child: Obx(() => controller.isMarketplace.value 
-                  ? _buildMarketplaceView(context, isDark) 
+                  ? _buildMarketplaceView(context, isDark, controller) 
                   : _buildJobsDetailedView(context, isDark, controller)),
             ),
           ],
@@ -771,7 +783,7 @@ class JobsScreen extends StatelessWidget {
   }
 
   // --- MARKETPLACE VIEW (MODIFIED FROM PREVIOUS VERSION TO USE SAME CONTROLLER) ---
-  Widget _buildMarketplaceView(BuildContext context, bool isDark) {
+  Widget _buildMarketplaceView(BuildContext context, bool isDark, JobsController controller) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -839,9 +851,10 @@ class JobsScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Icon(Icons.search, color: Colors.grey),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
+                      onChanged: (val) => controller.marketplaceSearchQuery.value = val,
+                      decoration: const InputDecoration(
                         hintText: 'What service are',
                         hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
@@ -913,22 +926,22 @@ class JobsScreen extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 0.85,
-            children: [
-              _buildCategoryCard('Web Dev', Icons.code, const Color(0xFFE8F1FF), const Color(0xFF2B7FFF), isDark),
-              _buildCategoryCard('Design', Icons.palette_outlined, const Color(0xFFF6EEFF), const Color(0xFF9B51E0), isDark),
-              _buildCategoryCard('Marketing', Icons.campaign_outlined, const Color(0xFFFFF0F5), const Color(0xFFFF4D94), isDark),
-              _buildCategoryCard('Writing', Icons.edit_note, const Color(0xFFFFF7EB), const Color(0xFFF2994A), isDark),
-              _buildCategoryCard('Video', Icons.videocam_outlined, const Color(0xFFEFFFF7), const Color(0xFF27AE60), isDark),
-            ],
-          ),
+    GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 0.85,
+      children: [
+        _buildCategoryCard('Web Dev', Icons.code, const Color(0xFFE8F1FF), const Color(0xFF2B7FFF), isDark),
+        _buildCategoryCard('Design', Icons.palette_outlined, const Color(0xFFF6EEFF), const Color(0xFF9B51E0), isDark),
+        _buildCategoryCard('Marketing', Icons.campaign_outlined, const Color(0xFFFFF0F5), const Color(0xFFFF4D94), isDark),
+        _buildCategoryCard('Writing', Icons.edit_note, const Color(0xFFFFF7EB), const Color(0xFFF2994A), isDark),
+        _buildCategoryCard('Video', Icons.videocam_outlined, const Color(0xFFEFFFF7), const Color(0xFF27AE60), isDark),
+      ],
+    ),
           const SizedBox(height: 32),
           _buildTrendingServices(context, isDark),
           _buildFeaturesSection(isDark),
@@ -951,32 +964,35 @@ class JobsScreen extends StatelessWidget {
   }
 
   Widget _buildCategoryCard(String label, IconData icon, Color bgColor, Color iconColor, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF11141B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: !isDark ? [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
-        ] : null,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark ? iconColor.withOpacity(0.1) : bgColor,
-              shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () => Get.to(() => CategoryServicesScreen(categoryName: label)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF11141B) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          boxShadow: !isDark ? [
+            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
+          ] : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? iconColor.withOpacity(0.1) : bgColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 32),
             ),
-            child: Icon(icon, color: iconColor, size: 32),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1010,153 +1026,156 @@ class JobsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        SizedBox(
+        Obx(() => SizedBox(
           height: 380,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: controller.trendingGigs.length,
+            itemCount: controller.filteredGigs.length,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
-              return _buildGigCard(controller.trendingGigs[index], isDark);
+              return _buildGigCard(controller.filteredGigs[index], isDark);
             },
           ),
-        ),
+        )),
       ],
     );
   }
 
   Widget _buildGigCard(GigModel gig, bool isDark) {
-    return Container(
-      width: 300,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF11141B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: !isDark ? [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
-        ] : null,
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Thumbnail
-          Stack(
-            children: [
-              Image.network(
-                gig.thumbnailUrl,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${gig.rating}',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${gig.reviewsCount})',
-                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () => Get.to(() => GigDetailScreen(gig: gig)),
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF11141B) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          boxShadow: !isDark ? [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+          ] : null,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Thumbnail
+            Stack(
               children: [
-                // Seller info
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundImage: NetworkImage(gig.sellerAvatarUrl),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(gig.sellerName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                          Text('Top Rated', style: TextStyle(color: Colors.grey[500], fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        gig.sellerLevel,
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey[400]),
-                      ),
-                    ),
-                  ],
+                Image.network(
+                  gig.thumbnailUrl,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 12),
-                
-                // Gig title
-                Text(
-                  gig.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    height: 1.4,
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star, color: Colors.amber, size: 14),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${gig.rating}',
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '(${gig.reviewsCount})',
+                          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11),
+                        ),
+                      ],
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                
-                const SizedBox(height: 16),
-                const Divider(height: 1),
-                const SizedBox(height: 16),
-
-                // Pricing
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'STARTING AT',
-                      style: TextStyle(color: Colors.grey[500], fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                    ),
-                    Text(
-                      gig.price,
-                      style: const TextStyle(
-                        color: AppPalette.accentBlue,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
-          ),
-        ],
+  
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Seller info
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundImage: NetworkImage(gig.sellerAvatarUrl),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(gig.sellerName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text('Top Rated', style: TextStyle(color: Colors.grey[500], fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          gig.sellerLevel,
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey[400]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Gig title
+                  Text(
+                    gig.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  const Divider(height: 1),
+                  const SizedBox(height: 16),
+  
+                  // Pricing
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'STARTING AT',
+                        style: TextStyle(color: Colors.grey[500], fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                      ),
+                      Text(
+                        gig.price,
+                        style: const TextStyle(
+                          color: AppPalette.accentBlue,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

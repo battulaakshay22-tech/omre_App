@@ -205,6 +205,87 @@ class _OrbitHomeScreenState extends State<OrbitHomeScreen> {
     );
   }
 
+  void _showAdvancedFilters() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Advanced Filters',
+              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            const Text('Language', style: TextStyle(color: Colors.white70, fontSize: 14)),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: ['English', 'Spanish', 'French', 'Chinese', 'German'].map((lang) {
+                return Chip(
+                  label: Text(lang),
+                  backgroundColor: Colors.white.withOpacity(0.05),
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide.none),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Verified Topics Only', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                Switch(
+                  value: false, 
+                  onChanged: (val) {},
+                  activeColor: const Color(0xFF2563EB),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text('Minimum Listeners', style: TextStyle(color: Colors.white70, fontSize: 14)),
+            Slider(
+              value: 100,
+              min: 0,
+              max: 1000,
+              divisions: 10,
+              label: '100',
+              activeColor: const Color(0xFF2563EB),
+              onChanged: (val) {},
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Filters applied')),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: const Text('Apply Filters', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,6 +306,7 @@ class _OrbitHomeScreenState extends State<OrbitHomeScreen> {
                 onFilterChanged: (filter) {
                   setState(() => selectedFilter = filter);
                 },
+                onAdvancedTap: _showAdvancedFilters,
               ),
               _TopicGrid(
                 selectedFilter: selectedFilter,
@@ -313,10 +395,12 @@ class _HeroSection extends StatelessWidget {
 class _TopicFilters extends StatelessWidget {
   final String selectedFilter;
   final Function(String) onFilterChanged;
+  final VoidCallback onAdvancedTap;
 
   const _TopicFilters({
     required this.selectedFilter,
     required this.onFilterChanged,
+    required this.onAdvancedTap,
   });
 
   @override
@@ -342,13 +426,20 @@ class _TopicFilters extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Icon(Icons.filter_list, color: Colors.white.withValues(alpha: 0.5), size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Advanced',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 14,
+              GestureDetector(
+                onTap: onAdvancedTap,
+                child: Row(
+                  children: [
+                    Icon(Icons.filter_list, color: Colors.white.withValues(alpha: 0.5), size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Advanced',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

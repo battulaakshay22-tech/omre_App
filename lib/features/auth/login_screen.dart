@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
                    // Logo Section
                   Center(
                     child: Image.asset(
-                      'assets/logo/omre_light_mode.png',
-                      height: 150,
+                      'assets/logo_light_mode.jpg',
+                      height: 40,
                     ),
                   ),
                   const SizedBox(height: 8),

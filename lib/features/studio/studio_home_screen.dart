@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'controllers/studio_controller.dart';
 
 class StudioHomeScreen extends StatelessWidget {
   const StudioHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(StudioController());
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -53,7 +56,7 @@ class StudioHomeScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: controller.openScriptEditor,
                     icon: Icon(Icons.edit_note, size: 20, color: theme.textTheme.bodyLarge?.color),
                     label: Text('Write Script', style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                     style: OutlinedButton.styleFrom(
@@ -66,7 +69,7 @@ class StudioHomeScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: controller.openUploadVideo,
                     icon: const Icon(Icons.upload, size: 20, color: Colors.white),
                     label: const Text('Upload Video', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
@@ -86,64 +89,76 @@ class StudioHomeScreen extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 final double itemWidth = (constraints.maxWidth - 16) / 2;
-                return Wrap(
+                return Obx(() => Wrap(
                   spacing: 16,
                   runSpacing: 16,
                   children: [
-                    SizedBox(
-                      width: itemWidth,
-                      child: _buildStatCard(
-                        title: 'Total Subscribers',
-                        value: '45.2K',
-                        change: '+1,240',
-                        isPositive: true,
-                        icon: Icons.people_outline,
-                        color: Colors.blue,
-                        theme: theme,
-                        isDark: isDark,
+                    GestureDetector(
+                      onTap: controller.openAnalytics,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: _buildStatCard(
+                          title: 'Total Subscribers',
+                          value: controller.subscribers.value,
+                          change: '+1,240',
+                          isPositive: true,
+                          icon: Icons.people_outline,
+                          color: Colors.blue,
+                          theme: theme,
+                          isDark: isDark,
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: itemWidth,
-                      child: _buildStatCard(
-                        title: 'Total Views',
-                        value: '892.4K',
-                        change: '+12%',
-                        isPositive: true,
-                        icon: Icons.visibility_outlined,
-                        color: Colors.green,
-                        theme: theme,
-                        isDark: isDark,
+                    GestureDetector(
+                      onTap: controller.openAnalytics,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: _buildStatCard(
+                          title: 'Total Views',
+                          value: controller.totalViews.value,
+                          change: '+12%',
+                          isPositive: true,
+                          icon: Icons.visibility_outlined,
+                          color: Colors.green,
+                          theme: theme,
+                          isDark: isDark,
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: itemWidth,
-                      child: _buildStatCard(
-                        title: 'Watch Time (Hrs)',
-                        value: '24.5K',
-                        change: '+8.5%',
-                        isPositive: true,
-                        icon: Icons.access_time,
-                        color: Colors.purple,
-                        theme: theme,
-                        isDark: isDark,
+                    GestureDetector(
+                      onTap: controller.openAnalytics,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: _buildStatCard(
+                          title: 'Watch Time (Hrs)',
+                          value: controller.watchTime.value,
+                          change: '+8.5%',
+                          isPositive: true,
+                          icon: Icons.access_time,
+                          color: Colors.purple,
+                          theme: theme,
+                          isDark: isDark,
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: itemWidth,
-                      child: _buildStatCard(
-                        title: 'Estimated Rev',
-                        value: '\$3,450',
-                        change: '+15%',
-                        isPositive: true,
-                        icon: Icons.attach_money,
-                        color: Colors.orange,
-                        theme: theme,
-                        isDark: isDark,
+                    GestureDetector(
+                      onTap: controller.openAnalytics,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: _buildStatCard(
+                          title: 'Estimated Rev',
+                          value: controller.revenue.value,
+                          change: '+15%',
+                          isPositive: true,
+                          icon: Icons.attach_money,
+                          color: Colors.orange,
+                          theme: theme,
+                          isDark: isDark,
+                        ),
                       ),
                     ),
                   ],
-                );
+                ));
               },
             ),
 
@@ -189,32 +204,54 @@ class StudioHomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Building a Modern Web App',
+                  Obx(() => Text(
+                    controller.recentVideoTitle.value,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
-                  ),
+                  )),
                   const Text(
                     'Published 2 days ago',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
+                  Obx(() => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildVideoMetric('Views', controller.recentVideoViews.value, theme),
+                      _buildVideoMetric('CTR', controller.recentVideoCTR.value, theme),
+                      _buildVideoMetric('Avg Duration', controller.recentVideoAvgDuration.value, theme),
+                    ],
+                  )),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildVideoMetric('Views', '12.5K', theme),
-                      _buildVideoMetric('CTR', '8.4%', theme),
-                      _buildVideoMetric('Avg Duration', '4:52', theme),
+                      TextButton(
+                        onPressed: controller.openAnalytics,
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        child: const Text('Go to Video Analytics'),
+                      ),
+                      TextButton(
+                        onPressed: controller.openComments,
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        child: const Text('See Comments'),
+                      ),
                     ],
                   ),
-                   const SizedBox(height: 16),
-                   TextButton(
-                     onPressed: () {},
-                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                     child: const Text('Go to Video Analytics'),
-                   ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: controller.openChannelContent,
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('Manage All Content'),
+                    ),
+                  ),
                 ],
               ),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

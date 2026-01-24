@@ -1,4 +1,4 @@
-package com.example.omre
+package com.omre.app
 
 import io.flutter.embedding.android.FlutterActivity
 

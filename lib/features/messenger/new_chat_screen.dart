@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/services/mock_service.dart';
 import '../../core/theme/palette.dart';
-import 'generic_action_screen.dart';
+import 'create_group_screen.dart';
+import 'create_contact_screen.dart';
+import 'create_community_screen.dart';
+import 'create_channel_screen.dart';
 
 class NewChatScreen extends StatelessWidget {
   const NewChatScreen({super.key});
@@ -77,10 +80,10 @@ class NewChatScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildActionItem(Icons.group_add, 'New group', isDark, onTap: () => Get.to(() => const GenericActionScreen(title: 'Group', subtitle: 'Create a group to chat with friends and family.', icon: Icons.group_add))),
-                  _buildActionItem(Icons.person_add, 'New contact', isDark, onTap: () => Get.to(() => const GenericActionScreen(title: 'Contact', subtitle: 'Add a new contact to start chatting.', icon: Icons.person_add))),
-                  _buildActionItem(Icons.groups, 'New community', isDark, onTap: () => Get.to(() => const GenericActionScreen(title: 'Community', subtitle: 'Connect with people who share your interests.', icon: Icons.groups))),
-                  _buildActionItem(Icons.campaign, 'New channel', isDark, onTap: () => Get.to(() => const GenericActionScreen(title: 'Channel', subtitle: 'Broadcast messages to a large audience.', icon: Icons.campaign))),
+                  _buildActionItem(Icons.group_add, 'New group', isDark, onTap: () => Get.to(() => const CreateGroupScreen())),
+                  _buildActionItem(Icons.person_add, 'New contact', isDark, onTap: () => Get.to(() => const CreateContactScreen())),
+                  _buildActionItem(Icons.groups, 'New community', isDark, onTap: () => Get.to(() => const CreateCommunityScreen())),
+                  _buildActionItem(Icons.campaign, 'New channel', isDark, onTap: () => Get.to(() => const CreateChannelScreen())),
                   
                   const SizedBox(height: 24),
                   

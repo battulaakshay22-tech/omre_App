@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/theme/palette.dart';
 import 'controllers/biz_controller.dart';
+import 'create_campaign_screen.dart';
 
 class OrdersScreen extends GetView<BizController> {
   const OrdersScreen({super.key});
@@ -127,7 +128,7 @@ class AdsManagerScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => Get.to(() => const CreateCampaignScreen()),
                 icon: const Icon(Icons.add_chart),
                 label: const Text('Create New Campaign'),
                 style: ElevatedButton.styleFrom(
@@ -236,7 +237,7 @@ class AdsManagerScreen extends StatelessWidget {
   }
 }
 
-class WalletScreen extends StatelessWidget {
+class WalletScreen extends GetView<BizController> {
   const WalletScreen({super.key});
 
   @override
@@ -260,15 +261,15 @@ class WalletScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildBalanceCard(isDark),
+            Obx(() => _buildBalanceCard(isDark, controller.balance.value)),
             const SizedBox(height: 24),
             Row(
               children: [
-                _buildWalletAction(Icons.arrow_upward, 'Transfer', Colors.blue, isDark),
+                _buildWalletAction(Icons.arrow_upward, 'Transfer', Colors.blue, isDark, onTap: () => _showTransferDialog(context)),
                 const SizedBox(width: 12),
-                _buildWalletAction(Icons.add, 'Add Funds', Colors.green, isDark),
+                _buildWalletAction(Icons.add, 'Add Funds', Colors.green, isDark, onTap: () => _showAddFundsDialog(context)),
                 const SizedBox(width: 12),
-                _buildWalletAction(Icons.history, 'History', Colors.orange, isDark),
+                _buildWalletAction(Icons.history, 'History', Colors.orange, isDark, onTap: () {}),
               ],
             ),
             const SizedBox(height: 24),
@@ -277,14 +278,93 @@ class WalletScreen extends StatelessWidget {
               child: Text('Recent Transactions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 16),
-            ...List.generate(5, (index) => _buildTransactionItem(index, isDark)),
+            Obx(() => ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.transactions.length,
+              itemBuilder: (context, index) {
+                return _buildTransactionItem(controller.transactions[index], isDark);
+              },
+            )),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBalanceCard(bool isDark) {
+  void _showAddFundsDialog(BuildContext context) {
+    final amountController = TextEditingController();
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Add Funds'),
+        content: TextField(
+          controller: amountController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(hintText: 'Enter amount', prefixText: '\$'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final amount = double.tryParse(amountController.text) ?? 0;
+              if (amount > 0) {
+                controller.addFunds(amount);
+                Get.back();
+                Get.snackbar('Success', 'Added \$${amount.toStringAsFixed(2)} to wallet');
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTransferDialog(BuildContext context) {
+    final amountController = TextEditingController();
+    final recipientController = TextEditingController();
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Transfer Funds'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: recipientController,
+              decoration: const InputDecoration(hintText: 'Recipient name'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(hintText: 'Enter amount', prefixText: '\$'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final amount = double.tryParse(amountController.text) ?? 0;
+              final recipient = recipientController.text;
+              if (amount > 0 && recipient.isNotEmpty) {
+                if (controller.balance.value >= amount) {
+                  controller.transferFunds(amount, recipient);
+                  Get.back();
+                  Get.snackbar('Success', 'Transferred \$${amount.toStringAsFixed(2)} to $recipient');
+                } else {
+                  Get.snackbar('Error', 'Insufficient balance');
+                }
+              }
+            },
+            child: const Text('Transfer'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBalanceCard(bool isDark, double balanceValue) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -308,7 +388,7 @@ class WalletScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const Text('\$8,420.50', style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
+          Text('\$${balanceValue.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -322,28 +402,31 @@ class WalletScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWalletAction(IconData icon, String label, Color color, bool isDark) {
+  Widget _buildWalletAction(IconData icon, String label, Color color, bool isDark, {VoidCallback? onTap}) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-          ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color),
+              const SizedBox(height: 8),
+              Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTransactionItem(int index, bool isDark) {
-    final isWithdrawal = index % 3 == 0;
+  Widget _buildTransactionItem(Map<String, dynamic> tx, bool isDark) {
+    final isWithdrawal = tx['type'] == 'out';
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -373,18 +456,18 @@ class WalletScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isWithdrawal ? 'Withdrawal to Bank' : 'Sale - Classic Denim',
+                    tx['title'],
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '24 Jan, 2024',
+                    tx['date'],
                     style: TextStyle(color: Colors.grey[500], fontSize: 12),
                   ),
                 ],
               ),
             ),
             Text(
-              isWithdrawal ? '-\$200.00' : '+\$45.00',
+              '${isWithdrawal ? '-' : '+'}\$${(tx['amount'] as double).toStringAsFixed(2)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: isWithdrawal ? Colors.red : Colors.green,

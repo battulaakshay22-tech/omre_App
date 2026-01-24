@@ -6,6 +6,37 @@ class BizController extends GetxController {
   final _picker = ImagePicker();
   final selectedProductImage = Rxn<File>();
 
+  // Wallet State
+  final balance = 8420.50.obs;
+  final transactions = <Map<String, dynamic>>[
+    {'type': 'out', 'title': 'Withdrawal to Bank', 'date': '24 Jan, 2024', 'amount': 200.00},
+    {'type': 'in', 'title': 'Sale - Classic Denim', 'date': '24 Jan, 2024', 'amount': 45.00},
+    {'type': 'in', 'title': 'Sale - Cotton Tee', 'date': '23 Jan, 2024', 'amount': 32.00},
+    {'type': 'out', 'title': 'Ads Content Boost', 'date': '22 Jan, 2024', 'amount': 15.00},
+  ].obs;
+
+  void addFunds(double amount) {
+    balance.value += amount;
+    transactions.insert(0, {
+      'type': 'in',
+      'title': 'Deposit Funds',
+      'date': 'Just now',
+      'amount': amount,
+    });
+  }
+
+  void transferFunds(double amount, String recipient) {
+    if (balance.value >= amount) {
+      balance.value -= amount;
+      transactions.insert(0, {
+        'type': 'out',
+        'title': 'Transfer to $recipient',
+        'date': 'Just now',
+        'amount': amount,
+      });
+    }
+  }
+
   Future<void> pickProductImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {

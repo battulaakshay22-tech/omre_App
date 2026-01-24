@@ -29,11 +29,11 @@ import '../../features/video/video_home_screen.dart';
 import '../../features/movies/movies_screen.dart';
 import '../../features/images/images_screen.dart';
 
-import '../../features/features/omni_know_screen.dart';
-import '../../features/features/happy_corner_screen.dart';
-import '../../features/features/virtual_world_screen.dart';
-import '../../features/features/digital_citizen_screen.dart';
-import '../../features/features/omni_ai_screen.dart';
+import '../../features/omni_suite/omni_know_screen.dart';
+import '../../features/omni_suite/happy_corner_screen.dart';
+import '../../features/omni_suite/virtual_world_screen.dart';
+import '../../features/omni_suite/digital_citizen_screen.dart';
+import '../../features/omni_suite/omni_ai_screen.dart';
 
 class ShellScreen extends GetView<AppController> {
   const ShellScreen({super.key});

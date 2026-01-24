@@ -24,10 +24,16 @@ import '../../features/messenger/controllers/chat_detail_controller.dart';
 import '../../features/biz/biz_home_screen.dart';
 import '../services/state_providers.dart';
 
+import '../../features/auth/splash_screen.dart';
+
 class AppPages {
-  static const initial = '/login';
+  static const initial = '/splash';
 
   static final routes = [
+    GetPage(
+      name: '/splash',
+      page: () => const SplashScreen(),
+    ),
     GetPage(
       name: '/login',
       page: () => const LoginScreen(),

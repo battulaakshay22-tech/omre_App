@@ -1,7 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'image_detail_screen.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
+
+  @override
+  State<ExploreScreen> createState() => _ExploreScreenState();
+}
+
+class _ExploreScreenState extends State<ExploreScreen> {
+  String selectedCategory = 'For You';
+  final categories = ['For You', 'People', 'Posts', 'Video', 'Sound', 'Channels'];
+
+  // Mock data for different categories
+  Map<String, List<Map<String, dynamic>>> get _categoryData => {
+    'For You': [
+      {'url': 'https://picsum.photos/seed/leaf/400/500', 'height': 200.0},
+      {'url': 'https://picsum.photos/seed/diver/400/600', 'height': 280.0},
+      {'url': 'https://picsum.photos/seed/nature/400/400', 'height': 180.0},
+      {'url': 'https://picsum.photos/seed/architecture/400/500', 'height': 260.0},
+      {'url': 'https://picsum.photos/seed/tea/400/400', 'height': 220.0},
+      {'url': 'https://picsum.photos/seed/balloon/400/400', 'height': 200.0},
+    ],
+    'People': [
+      {'url': 'https://picsum.photos/seed/person1/400/500', 'height': 250.0},
+      {'url': 'https://picsum.photos/seed/person2/400/400', 'height': 200.0},
+      {'url': 'https://picsum.photos/seed/person3/400/600', 'height': 300.0},
+      {'url': 'https://picsum.photos/seed/person4/400/500', 'height': 240.0},
+    ],
+    'Posts': [
+      {'url': 'https://picsum.photos/seed/post1/400/400', 'height': 180.0},
+      {'url': 'https://picsum.photos/seed/post2/400/300', 'height': 150.0},
+      {'url': 'https://picsum.photos/seed/post3/400/500', 'height': 250.0},
+    ],
+    // Fallback for others
+  };
+
+  List<Map<String, dynamic>> get _currentItems {
+    return _categoryData[selectedCategory] ?? _categoryData['For You']!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +79,7 @@ class ExploreScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
-                children: [
-                  _buildCategoryChip('For You', true, theme),
-                  _buildCategoryChip('People', false, theme),
-                  _buildCategoryChip('Posts', false, theme),
-                  _buildCategoryChip('Video', false, theme),
-                  _buildCategoryChip('Sound', false, theme),
-                  _buildCategoryChip('Channels', false, theme),
-                ],
+                children: categories.map((cat) => _buildCategoryChip(cat, cat == selectedCategory, theme)).toList(),
               ),
             ),
 
@@ -64,50 +95,26 @@ class ExploreScreen extends StatelessWidget {
                     // Column 1
                     Expanded(
                       child: Column(
-                        children: [
-                          _buildImageCard(
-                            'https://picsum.photos/seed/leaf/400/500', // Leaf
-                            height: 200,
-                            isDark: isDark,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildImageCard(
-                            'https://picsum.photos/seed/diver/400/600', // Underwater/Diver
-                            height: 280,
-                            isDark: isDark,
-                          ),
-                          const SizedBox(height: 16),
-                           _buildImageCard(
-                            'https://picsum.photos/seed/nature/400/400', // Landscape
-                            height: 180,
-                            isDark: isDark,
-                          ),
-                        ],
+                        children: _currentItems.asMap().entries
+                            .where((e) => e.key % 2 == 0)
+                            .map((e) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: _buildImageCard(e.value['url'], height: e.value['height'], isDark: isDark),
+                                ))
+                            .toList(),
                       ),
                     ),
                     const SizedBox(width: 16),
                     // Column 2
                     Expanded(
                       child: Column(
-                        children: [
-                          _buildImageCard(
-                            'https://picsum.photos/seed/architecture/400/500', // Architecture
-                            height: 260,
-                            isDark: isDark,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildImageCard(
-                            'https://picsum.photos/seed/tea/400/400', // Meeting/Teapot context
-                            height: 220,
-                            isDark: isDark,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildImageCard(
-                            'https://picsum.photos/seed/balloon/400/400', // Balloon/Travel
-                            height: 200,
-                            isDark: isDark,
-                          ),
-                        ],
+                        children: _currentItems.asMap().entries
+                            .where((e) => e.key % 2 != 0)
+                            .map((e) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: _buildImageCard(e.value['url'], height: e.value['height'], isDark: isDark),
+                                ))
+                            .toList(),
                       ),
                     ),
                   ],
@@ -121,27 +128,33 @@ class ExploreScreen extends StatelessWidget {
   }
 
   Widget _buildCategoryChip(String label, bool isSelected, ThemeData theme) {
-    // Determine text color: White if selected, otherwise theme body color
     final textColor = isSelected ? Colors.white : theme.textTheme.bodyLarge?.color;
-    final borderColor = theme.brightness == Brightness.dark ? Colors.grey[700]! : Colors.grey[300]!;
+    final borderColor = theme.brightness == Brightness.dark ? Colors.grey[700] : Colors.grey[300];
 
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF2555C8) : Colors.transparent, // App Blue
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected ? Colors.transparent : borderColor,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedCategory = label;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF2555C8) : Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isSelected ? Colors.transparent : borderColor!,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
           ),
         ),
       ),
@@ -149,17 +162,23 @@ class ExploreScreen extends StatelessWidget {
   }
 
   Widget _buildImageCard(String imageUrl, {required double height, required bool isDark}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Image.network(
-        imageUrl,
-        width: double.infinity,
-        height: height,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          height: height,
-          color: isDark ? Colors.grey[800] : Colors.grey[200],
-          child: Icon(Icons.broken_image, color: isDark ? Colors.grey[600] : Colors.grey),
+    return GestureDetector(
+      onTap: () => Get.to(() => ImageDetailScreen(imageUrl: imageUrl)),
+      child: Hero(
+        tag: imageUrl,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.network(
+            imageUrl,
+            width: double.infinity,
+            height: height,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              height: height,
+              color: isDark ? Colors.grey[800] : Colors.grey[200],
+              child: Icon(Icons.broken_image, color: isDark ? Colors.grey[600] : Colors.grey),
+            ),
+          ),
         ),
       ),
     );

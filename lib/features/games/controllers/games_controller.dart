@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../live_channel_screen.dart';
+import '../trending_clip_screen.dart';
 
 class GamesController extends GetxController {
   
@@ -18,18 +20,21 @@ class GamesController extends GetxController {
       'title': 'Ranked Grind into Masters',
       'streamer': 'KaiCenat • Neon Vanguard',
        'image': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2671&auto=format&fit=crop',
+      'avatar': 'https://i.pravatar.cc/150?u=kai',
       'tags': ['Competitive', '45k'],
     },
     {
       'title': 'Chill Vibes & LoFi',
       'streamer': 'Pokimane • Just Chatting',
       'image': 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2670&auto=format&fit=crop',
+      'avatar': 'https://i.pravatar.cc/150?u=poki',
       'tags': ['Chill', '22k'],
     },
      {
       'title': 'Speedrunning Elden Ring',
       'streamer': 'SpeedRunnerPro • Elden Ring',
       'image': 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=2670&auto=format&fit=crop',
+      'avatar': 'https://i.pravatar.cc/150?u=speed',
       'tags': ['Speedrun', '15k'],
     },
   ].obs;
@@ -55,25 +60,12 @@ class GamesController extends GetxController {
     },
   ].obs;
 
-  void openStream(String title) {
-    Get.snackbar(
-      'Opening Stream',
-      'Joining $title...',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.purple,
-      colorText: Colors.white,
-      icon: const Icon(Icons.videocam, color: Colors.white),
-    );
+  void openStream(Map<String, dynamic> channel) {
+    Get.to(() => LiveChannelScreen(channel: channel));
   }
 
-  void openClip(String title) {
-     Get.snackbar(
-      'Playing Clip',
-      'Now playing $title',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-       icon: const Icon(Icons.play_arrow, color: Colors.white),
-    );
+  void openClip(Map<String, dynamic> clip) {
+    Get.to(() => TrendingClipScreen(clip: clip));
   }
 }
+

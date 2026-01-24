@@ -149,7 +149,7 @@ class ProductListScreen extends GetView<BizController> {
                                   color: isDark ? Colors.grey[800] : Colors.grey[100],
                                   borderRadius: BorderRadius.circular(8),
                                   image: const DecorationImage(
-                                    image: AssetImage('assets/images/placeholder.png'), // Using placeholder logic, actually ideally network or asset
+                                    image: NetworkImage('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=150&q=80'),
                                     fit: BoxFit.cover,
                                   ),
                                 ),

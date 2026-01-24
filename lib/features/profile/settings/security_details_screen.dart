@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/palette.dart';
 import 'recovery_email_screen.dart';
 import 'security_logs_screen.dart';
+import 'active_sessions_screen.dart';
 
 class SecurityDetailsScreen extends StatefulWidget {
   const SecurityDetailsScreen({super.key});
@@ -84,28 +85,11 @@ class _SecurityDetailsScreenState extends State<SecurityDetailsScreen> {
             ),
             const SizedBox(height: 24),
             _buildSectionHeader('Active Sessions'),
-            _buildActiveDeviceTile(
-              device: 'iPhone 15 Pro (Current)',
-              location: 'San Francisco, USA',
-              time: 'Active now',
-              isCurrent: true,
-            ),
-            _buildActiveDeviceTile(
-              device: 'MacBook Pro 16"',
-              location: 'New York, USA',
-              time: '2 hours ago',
-            ),
-            _buildActiveDeviceTile(
-              device: 'iPad Air',
-              location: 'London, UK',
-              time: 'Yesterday',
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: const Text('Log out of all other sessions', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-              ),
+            _buildSecurityTile(
+              icon: Icons.devices,
+              title: 'Active Sessions',
+              subtitle: 'Manage devices logged into your account',
+              onTap: () => Get.to(() => const ActiveSessionsScreen()),
             ),
             const SizedBox(height: 24),
             _buildSectionHeader('Advanced Settings'),
@@ -253,56 +237,6 @@ class _SecurityDetailsScreenState extends State<SecurityDetailsScreen> {
         trailing: trailing ?? const Icon(Icons.chevron_right, size: 20),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-    );
-  }
-
-  Widget _buildActiveDeviceTile({
-    required String device,
-    required String location,
-    required String time,
-    bool isCurrent = false,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? AppPalette.darkSurface : AppPalette.lightSurface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isCurrent ? AppPalette.accentBlue.withOpacity(0.3) : Colors.grey.withOpacity(0.1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isCurrent ? AppPalette.accentBlue : Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              device.contains('iPhone') ? Icons.phone_iphone : Icons.laptop_mac,
-              color: isCurrent ? Colors.white : Colors.grey,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(device, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 2),
-                Text('$location • $time', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-              ],
-            ),
-          ),
-          if (!isCurrent)
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.logout, color: Colors.grey, size: 20),
-            ),
-        ],
       ),
     );
   }

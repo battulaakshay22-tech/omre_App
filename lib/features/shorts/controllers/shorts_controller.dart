@@ -1,0 +1,103 @@
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+class ShortModel {
+  final String id;
+  final String videoUrl;
+  final String creatorName;
+  final String creatorHandle;
+  final String creatorAvatar;
+  final String description;
+  final String likes;
+  final String comments;
+  final String shares;
+
+  ShortModel({
+    required this.id,
+    required this.videoUrl,
+    required this.creatorName,
+    required this.creatorHandle,
+    required this.creatorAvatar,
+    required this.description,
+    required this.likes,
+    required this.comments,
+    required this.shares,
+  });
+}
+
+class ShortsController extends GetxController {
+  final shorts = <ShortModel>[
+    ShortModel(
+      id: '1',
+      videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+      creatorName: 'Flutter Dev',
+      creatorHandle: '@flutter_dev',
+      creatorAvatar: 'https://i.pravatar.cc/150?u=flutter',
+      description: 'Building beautiful apps with Flutter! 🚀 #flutter #dart #mobiledev',
+      likes: '12.4k',
+      comments: '852',
+      shares: '1.2k',
+    ),
+    ShortModel(
+      id: '2',
+      videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      creatorName: 'Nature Lover',
+      creatorHandle: '@nature_fan',
+      creatorAvatar: 'https://i.pravatar.cc/150?u=nature',
+      description: 'The beauty of nature in slow motion. 🐝🌼 #nature #slowmo #beauty',
+      likes: '8.1k',
+      comments: '432',
+      shares: '561',
+    ),
+    ShortModel(
+      id: '3',
+      videoUrl: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+      creatorName: 'Animation Studio',
+      creatorHandle: '@bunny_anim',
+      creatorAvatar: 'https://i.pravatar.cc/150?u=bunny',
+      description: 'Big Buck Bunny classic animation snippet. 🐰🎨 #animation #classic #art',
+      likes: '25k',
+      comments: '1.2k',
+      shares: '4.5k',
+    ),
+  ].obs;
+
+  final currentIndex = 0.obs;
+
+  final likedShorts = <String>{}.obs;
+  final followedCreators = <String>{}.obs;
+
+  void updateIndex(int index) {
+    currentIndex.value = index;
+  }
+
+  void toggleFollow(String handle) {
+    if (followedCreators.contains(handle)) {
+      followedCreators.remove(handle);
+    } else {
+      followedCreators.add(handle);
+      Get.snackbar('Following', 'You are now following $handle',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 1),
+          backgroundColor: Colors.blue.withOpacity(0.1),
+          colorText: Colors.blue);
+    }
+  }
+
+  void likeShort(String id) {
+    if (likedShorts.contains(id)) {
+      likedShorts.remove(id);
+    } else {
+      likedShorts.add(id);
+      Get.snackbar('Liked', 'You liked this short!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 1),
+          backgroundColor: Colors.red.withOpacity(0.1),
+          colorText: Colors.red);
+    }
+  }
+
+  void shareShort(String id) {
+     Get.snackbar('Shared', 'Short link copied to clipboard!', snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 1));
+  }
+}

@@ -145,163 +145,230 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
             
             // Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Hero Card (Featured Stream)
-                    Obx(() {
-                       final featured = controller.featuredStream;
-                       return GestureDetector(
-                         onTap: () => controller.openStream(featured['title'] as String),
-                         child: Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(
-                              image: NetworkImage(featured['image'] as String), 
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.black.withOpacity(0.9),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
-                                          child: const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
-                                          child: Text(featured['viewers'] as String, style: const TextStyle(color: Colors.white, fontSize: 10)),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(featured['title'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            CircleAvatar(radius: 12, backgroundImage: NetworkImage(featured['avatar'] as String)),
-                                            const SizedBox(width: 8),
-                                            Text(featured['streamer'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                                            const SizedBox(width: 8),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(4)),
-                                              child: Text(featured['category'] as String, style: const TextStyle(color: Colors.white, fontSize: 10)),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                       );
-                    }),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Live Channels
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.videocam_outlined, color: Colors.pink, size: 20),
-                            const SizedBox(width: 8),
-                            Text('Live Channels', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.bodyLarge?.color)),
-                          ],
-                        ),
-                        Text('View All', style: TextStyle(color: Colors.blue[600], fontSize: 12, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Obx(() => Row(
-                        children: controller.liveChannels.map((channel) {
-                           return Padding(
-                             padding: const EdgeInsets.only(right: 12),
-                             child: GestureDetector(
-                               onTap: () => controller.openStream(channel['title']),
-                               child: _buildChannelCard(
-                                 image: channel['image'],
-                                 title: channel['title'],
-                                 streamer: channel['streamer'],
-                                 tags: List<String>.from(channel['tags']),
-                                 theme: theme,
-                                 isDark: isDark,
-                               ),
-                             ),
-                           );
-                        }).toList(),
-                      )),
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Trending Clips
-                    Row(
-                      children: [
-                        const Icon(Icons.local_fire_department, color: Colors.orange, size: 20),
-                        const SizedBox(width: 8),
-                        Text('Trending Clips', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.bodyLarge?.color)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Obx(() => Row(
-                        children: controller.trendingClips.map((clip) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: GestureDetector(
-                              onTap: () => controller.openClip(clip['title']),
-                              child: _buildClipCard(clip),
-                            ),
-                          );
-                        }).toList(),
-                      )),
-                    ),
-                  ],
-                ),
-              ),
+              child: _buildBodyContent(controller, theme, isDark),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildBodyContent(GamesController controller, ThemeData theme, bool isDark) {
+    if (selectedTab == 'Live Now') {
+      return Obx(() => GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 1, // Full width for details, or 2 for density. Channel card is wide.
+          mainAxisSpacing: 16,
+          childAspectRatio: 240/220, // Adjust based on card size
+        ),
+        itemCount: controller.liveChannels.length,
+        itemBuilder: (context, index) {
+          final channel = controller.liveChannels[index];
+          return GestureDetector(
+            onTap: () => controller.openStream(channel),
+            child: _buildChannelCard(
+              image: channel['image'],
+              title: channel['title'],
+              streamer: channel['streamer'],
+              tags: List<String>.from(channel['tags']),
+              theme: theme,
+              isDark: isDark,
+              width: double.infinity,
+            ),
+          );
+        },
+      ));
+    } else if (selectedTab == 'Clips') {
+      return Obx(() => GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 160/240,
+        ),
+        itemCount: controller.trendingClips.length,
+        itemBuilder: (context, index) {
+          final clip = controller.trendingClips[index];
+          return GestureDetector(
+            onTap: () => controller.openClip(clip),
+            child: _buildClipCard(clip),
+          );
+        },
+      ));
+    } else if (selectedTab == 'Overview') {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Hero Card (Featured Stream)
+            Obx(() {
+                final featured = controller.featuredStream;
+                return GestureDetector(
+                  onTap: () => controller.openStream(featured),
+                  child: Container(
+                  height: 220,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    image: DecorationImage(
+                      image: NetworkImage(featured['image'] as String), 
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.9),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
+                                  child: const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                                  child: Text(featured['viewers'] as String, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(featured['title'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    CircleAvatar(radius: 12, backgroundImage: NetworkImage(featured['avatar'] as String)),
+                                    const SizedBox(width: 8),
+                                    Text(featured['streamer'] as String, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(4)),
+                                      child: Text(featured['category'] as String, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                );
+            }),
+            
+            const SizedBox(height: 24),
+            
+            // Live Channels
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.videocam_outlined, color: Colors.pink, size: 20),
+                    const SizedBox(width: 8),
+                    Text('Live Channels', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.bodyLarge?.color)),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedTab = 'Live Now';
+                    });
+                  },
+                  child: Text('View All', style: TextStyle(color: Colors.blue[600], fontSize: 12, fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Obx(() => Row(
+                children: controller.liveChannels.map((channel) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: GestureDetector(
+                        onTap: () => controller.openStream(channel),
+                        child: _buildChannelCard(
+                          image: channel['image'],
+                          title: channel['title'],
+                          streamer: channel['streamer'],
+                          tags: List<String>.from(channel['tags']),
+                          theme: theme,
+                          isDark: isDark,
+                        ),
+                      ),
+                    );
+                }).toList(),
+              )),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Trending Clips
+            Row(
+              children: [
+                const Icon(Icons.local_fire_department, color: Colors.orange, size: 20),
+                const SizedBox(width: 8),
+                Text('Trending Clips', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme.textTheme.bodyLarge?.color)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Obx(() => Row(
+                children: controller.trendingClips.map((clip) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: GestureDetector(
+                      onTap: () => controller.openClip(clip),
+                      child: _buildClipCard(clip),
+                    ),
+                  );
+                }).toList(),
+              )),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.construction, size: 64, color: isDark ? Colors.white24 : Colors.black12),
+            const SizedBox(height: 16),
+            Text('Coming Soon', style: TextStyle(color: theme.hintColor, fontSize: 16)),
+          ],
+        ),
+      );
+    }
   }
   
   Widget _buildChannelCard({
@@ -311,9 +378,10 @@ class _GamesHomeScreenState extends State<GamesHomeScreen> {
     required List<String> tags,
     required ThemeData theme,
     required bool isDark,
+    double? width,
   }) {
     return Container(
-      width: 240,
+      width: width ?? 240,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[900] : Colors.white,

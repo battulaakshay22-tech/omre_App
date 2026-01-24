@@ -17,13 +17,13 @@ class EducationScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeroSection(isDark),
+            _buildHeroSection(controller, isDark),
             const SizedBox(height: 32),
-            _buildContinueLearningSection(isDark),
+            _buildContinueLearningSection(controller, isDark),
             const SizedBox(height: 32),
 
             // Explore by Category
-            _buildSectionHeader('Explore by Category', showViewAll: false),
+            _buildSectionHeader('Explore by Category', controller, showViewAll: false),
             const SizedBox(height: 16),
             GridView.count(
               crossAxisCount: 2,
@@ -33,13 +33,13 @@ class EducationScreen extends StatelessWidget {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               childAspectRatio: 1.1,
-              children: controller.categories.map((cat) => _buildCategoryCard(cat, isDark)).toList(),
+              children: controller.categories.map((cat) => _buildCategoryCard(cat, controller, isDark)).toList(),
             ),
 
             const SizedBox(height: 40),
 
             // Recommended for You
-            _buildSectionHeader('Recommended for You', subtitle: 'Based on your interests and goals'),
+            _buildSectionHeader('Recommended for You', controller, subtitle: 'Based on your interests and goals'),
             const SizedBox(height: 16),
             SizedBox(
               height: 380,
@@ -49,7 +49,7 @@ class EducationScreen extends StatelessWidget {
                 itemCount: controller.recommendedCourses.length,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return _buildCourseCard(controller.recommendedCourses[index], isDark);
+                  return _buildCourseCard(controller.recommendedCourses[index], controller, isDark);
                 },
               ),
             ),
@@ -76,7 +76,7 @@ class EducationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, {String? subtitle, bool showViewAll = true}) {
+  Widget _buildSectionHeader(String title, EducationController controller, {String? subtitle, bool showViewAll = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -91,7 +91,7 @@ class EducationScreen extends StatelessWidget {
               ),
               if (showViewAll)
                 TextButton(
-                  onPressed: () {},
+                  onPressed: controller.viewAllCourses,
                   child: const Text('View All', style: TextStyle(color: AppPalette.accentBlue, fontWeight: FontWeight.bold)),
                 ),
             ],
@@ -105,37 +105,40 @@ class EducationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(CourseCategory cat, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF11141B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: !isDark ? [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
-        ] : null,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: cat.color.withOpacity(isDark ? 0.1 : 0.05),
-              shape: BoxShape.circle,
+  Widget _buildCategoryCard(CourseCategory cat, EducationController controller, bool isDark) {
+    return GestureDetector(
+      onTap: () => controller.viewCategory(cat.name),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF11141B) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          boxShadow: !isDark ? [
+            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
+          ] : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cat.color.withOpacity(isDark ? 0.1 : 0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(cat.icon, color: cat.color, size: 28),
             ),
-            child: Icon(cat.icon, color: cat.color, size: 28),
-          ),
-          const SizedBox(height: 12),
-          Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-          const SizedBox(height: 4),
-          Text('${cat.count} courses', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-        ],
+            const SizedBox(height: 12),
+            Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            const SizedBox(height: 4),
+            Text('${cat.count} courses', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCourseCard(CourseModel course, bool isDark) {
+  Widget _buildCourseCard(CourseModel course, EducationController controller, bool isDark) {
     return Container(
       width: 280,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -198,7 +201,7 @@ class EducationScreen extends StatelessWidget {
                   children: [
                     Text('\$${course.price}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppPalette.accentBlue)),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => controller.enrollInCourse(course),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8B5CF6),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -254,7 +257,7 @@ class EducationScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.continueStreak,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFFFE4C24),
@@ -270,55 +273,58 @@ class EducationScreen extends StatelessWidget {
   }
 
   Widget _buildGoalCard(EducationController controller, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF11141B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Weekly Goal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Obx(() => Text('${(controller.weeklyProgress.value * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text('3 of 5 lessons', style: TextStyle(color: Colors.grey, fontSize: 14)),
-          const SizedBox(height: 16),
-          Obx(() => LinearProgressIndicator(
-            value: controller.weeklyProgress.value,
-            backgroundColor: Colors.grey.withOpacity(0.1),
-            color: AppPalette.accentBlue,
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(4),
-          )),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: ['M', 'T', 'W', 'T', 'F', 'S', 'S'].asMap().entries.map((entry) {
-              bool completed = entry.key < 3;
-              bool today = entry.key == 3;
-              return Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: completed ? const Color(0xFFEFFFF7) : (today ? const Color(0xFFF3E8FF) : Colors.grey.withOpacity(0.1)),
-                  borderRadius: BorderRadius.circular(10),
-                  border: today ? Border.all(color: const Color(0xFF8B5CF6)) : null,
-                ),
-                alignment: Alignment.center,
-                child: completed 
-                  ? const Icon(Icons.check, size: 16, color: Color(0xFF27AE60))
-                  : Text(entry.value, style: TextStyle(color: today ? const Color(0xFF8B5CF6) : Colors.grey, fontWeight: FontWeight.bold)),
-              );
-            }).toList(),
-          ),
-        ],
+    return GestureDetector(
+      onTap: controller.viewWeeklyGoal,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF11141B) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Weekly Goal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Obx(() => Text('${(controller.weeklyProgress.value * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text('3 of 5 lessons', style: TextStyle(color: Colors.grey, fontSize: 14)),
+            const SizedBox(height: 16),
+            Obx(() => LinearProgressIndicator(
+              value: controller.weeklyProgress.value,
+              backgroundColor: Colors.grey.withOpacity(0.1),
+              color: AppPalette.accentBlue,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+            )),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: ['M', 'T', 'W', 'T', 'F', 'S', 'S'].asMap().entries.map((entry) {
+                bool completed = entry.key < 3;
+                bool today = entry.key == 3;
+                return Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: completed ? const Color(0xFFEFFFF7) : (today ? const Color(0xFFF3E8FF) : Colors.grey.withOpacity(0.1)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: today ? Border.all(color: const Color(0xFF8B5CF6)) : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: completed 
+                    ? const Icon(Icons.check, size: 16, color: Color(0xFF27AE60))
+                    : Text(entry.value, style: TextStyle(color: today ? const Color(0xFF8B5CF6) : Colors.grey, fontWeight: FontWeight.bold)),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -361,7 +367,7 @@ class EducationScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.viewCertificates,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF8B5CF6),
@@ -376,7 +382,7 @@ class EducationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContinueLearningSection(bool isDark) {
+  Widget _buildContinueLearningSection(EducationController controller, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -393,7 +399,7 @@ class EducationScreen extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: controller.viewAllCourses,
                 child: const Text('View All', style: TextStyle(color: AppPalette.accentBlue, fontWeight: FontWeight.bold)),
               ),
             ],
@@ -480,7 +486,7 @@ class EducationScreen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: controller.resumeCourse,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2555C8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -500,7 +506,7 @@ class EducationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(bool isDark) {
+  Widget _buildHeroSection(EducationController controller, bool isDark) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -588,7 +594,7 @@ class EducationScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.viewAllCourses,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF8B5CF6),
