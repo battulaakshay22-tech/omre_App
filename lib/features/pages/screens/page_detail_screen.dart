@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../social/widgets/create_post_widget.dart';
 
-class PageDetailScreen extends StatelessWidget {
+class PageDetailScreen extends StatefulWidget {
   final String title;
   final String category;
   final String followers;
@@ -22,6 +22,19 @@ class PageDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<PageDetailScreen> createState() => _PageDetailScreenState();
+}
+
+class _PageDetailScreenState extends State<PageDetailScreen> {
+  late bool _isFollowing;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFollowing = widget.isJoined;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -36,7 +49,7 @@ class PageDetailScreen extends StatelessWidget {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(cover, fit: BoxFit.cover),
+              background: Image.asset(widget.cover, fit: BoxFit.cover),
             ),
             leading: IconButton(
               icon: const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.arrow_back, color: Colors.white)),
@@ -59,7 +72,7 @@ class PageDetailScreen extends StatelessWidget {
                           color: isDark ? const Color(0xFF242526) : Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: CircleAvatar(radius: 40, backgroundImage: AssetImage(image)),
+                        child: CircleAvatar(radius: 40, backgroundImage: AssetImage(widget.image)),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -68,11 +81,11 @@ class PageDetailScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(title, style: TextStyle(
+                              Text(widget.title, style: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black
                               )),
-                              Text(category, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                              Text(widget.category, style: const TextStyle(fontSize: 14, color: Colors.grey)),
                             ],
                           ),
                         ),
@@ -80,27 +93,38 @@ class PageDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(followers, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                  Text(widget.followers, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {
-                             Get.snackbar('Success', isJoined ? 'Unfollowed Page' : 'Following Page', snackPosition: SnackPosition.BOTTOM);
+                            setState(() {
+                              _isFollowing = !_isFollowing;
+                            });
+                             Get.snackbar(
+                               'Success', 
+                               _isFollowing ? 'Following ${widget.title}' : 'Unfollowed ${widget.title}', 
+                               snackPosition: SnackPosition.BOTTOM,
+                               backgroundColor: Colors.blue,
+                               colorText: Colors.white,
+                             );
                           },
-                          icon: Icon(isJoined ? Icons.check : Icons.add),
-                          label: Text(isJoined ? 'Following' : 'Follow'),
+                          icon: Icon(_isFollowing ? Icons.check : Icons.add),
+                          label: Text(_isFollowing ? 'Following' : 'Follow'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
+                            backgroundColor: _isFollowing ? Colors.grey[300] : Colors.blue,
+                            foregroundColor: _isFollowing ? Colors.black : Colors.white,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.snackbar('Message', 'Opening chat with ${widget.title}', snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 1));
+                          },
                           icon: const Icon(Icons.message),
                           label: const Text('Message'),
                           style: ElevatedButton.styleFrom(
@@ -111,7 +135,41 @@ class PageDetailScreen extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.bottomSheet(
+                            Container(
+                              color: isDark ? const Color(0xFF242526) : Colors.white,
+                              child: Wrap(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.share),
+                                    title: Text('Share Page', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                                    onTap: () {
+                                      Get.back();
+                                      Get.snackbar('Share', 'Sharing link copied!', snackPosition: SnackPosition.BOTTOM);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.report),
+                                    title: Text('Report Page', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                                    onTap: () {
+                                      Get.back();
+                                      Get.snackbar('Report', 'Page reported', snackPosition: SnackPosition.BOTTOM);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.block),
+                                    title: Text('Block Page', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                                    onTap: () {
+                                      Get.back();
+                                      Get.snackbar('Block', 'Page blocked', snackPosition: SnackPosition.BOTTOM);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.more_horiz),
                         color: isDark ? Colors.white : Colors.black,
                       )
@@ -131,9 +189,9 @@ class PageDetailScreen extends StatelessWidget {
                  children: [
                    Text('About', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
                    const SizedBox(height: 8),
-                   Text('Official page for $title. Sharing the latest updates and community news.', style: TextStyle(color: isDark ? Colors.grey[300] : Colors.grey[600])),
+                   Text('Official page for ${widget.title}. Sharing the latest updates and community news.', style: TextStyle(color: isDark ? Colors.grey[300] : Colors.grey[600])),
                    const SizedBox(height: 8),
-                   Row(children: [Icon(Icons.link, size: 16, color: Colors.blue), SizedBox(width: 4), Text('www.${title.removeAllWhitespace.toLowerCase()}.com', style: TextStyle(color: Colors.blue))]),
+                   Row(children: [Icon(Icons.link, size: 16, color: Colors.blue), SizedBox(width: 4), Text('www.${widget.title.removeAllWhitespace.toLowerCase()}.com', style: TextStyle(color: Colors.blue))]),
                  ],
                ),
              ),
@@ -151,19 +209,19 @@ class PageDetailScreen extends StatelessWidget {
                      children: [
                         Row(
                           children: [
-                            CircleAvatar(backgroundImage: AssetImage(image)),
+                            CircleAvatar(backgroundImage: AssetImage(widget.image)),
                             const SizedBox(width: 8),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                                Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
                                 Text('2 hours ago', style: TextStyle(color: Colors.grey, fontSize: 12)),
                               ],
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text('Check out our latest update! #$category', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                        Text('Check out our latest update! #${widget.category}', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
                         const SizedBox(height: 12),
                         Image.asset(AppAssets.post1, width: double.infinity, height: 200, fit: BoxFit.cover),
                         const SizedBox(height: 12),

@@ -4,8 +4,68 @@ import 'package:get/get.dart';
 import 'screens/create_page_screen.dart';
 import 'screens/page_detail_screen.dart';
 
-class PagesScreen extends StatelessWidget {
+class PagesScreen extends StatefulWidget {
   const PagesScreen({super.key});
+
+  @override
+  State<PagesScreen> createState() => _PagesScreenState();
+}
+
+class _PagesScreenState extends State<PagesScreen> {
+  String _selectedCategory = 'All';
+  
+  final List<String> _categories = ['All', 'Business', 'Music', 'Sports', 'Gaming', 'Art', 'Science & Tech', 'Health & Wellness', 'Design'];
+
+  final List<Map<String, String>> _allPages = [
+    {
+      'title': 'SpaceX Fans', 
+      'category': 'Science & Tech', 
+      'avatar': AppAssets.post4, 
+      'cover': AppAssets.cover1
+    },
+    {
+      'title': 'Healthy Living', 
+      'category': 'Health & Wellness', 
+      'avatar': AppAssets.post5, 
+      'cover': AppAssets.cover2
+    },
+    {
+      'title': 'Modern Architecture', 
+      'category': 'Design', 
+      'avatar': AppAssets.post1, 
+      'cover': AppAssets.cover3
+    },
+    {
+      'title': 'Global Business News', 
+      'category': 'Business', 
+      'avatar': AppAssets.post2, 
+      'cover': AppAssets.cover1
+    },
+    {
+      'title': 'Indie Music Radar', 
+      'category': 'Music', 
+      'avatar': AppAssets.post3, 
+      'cover': AppAssets.cover2
+    },
+    {
+      'title': 'Pro Gamers League', 
+      'category': 'Gaming', 
+      'avatar': AppAssets.avatar1, 
+      'cover': AppAssets.cover3
+    },
+     {
+      'title': 'Digital Art Showcase', 
+      'category': 'Art', 
+      'avatar': AppAssets.avatar2, 
+      'cover': AppAssets.cover1
+    },
+    {
+      'title': 'Premier League Updates', 
+      'category': 'Sports', 
+      'avatar': AppAssets.avatar3, 
+      'cover': AppAssets.cover2
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +73,6 @@ class PagesScreen extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF18191A) : const Color(0xFFF0F2F5);
 
-    return stopBuild(theme, isDark, bgColor, context);
-  }
-
-  Widget stopBuild(ThemeData theme, bool isDark, Color bgColor, BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -76,28 +132,55 @@ class PagesScreen extends StatelessWidget {
 
   // --- TAB 2: DISCOVER ---
   Widget _buildDiscoverTab(ThemeData theme, bool isDark) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    // Filter logic
+    final displayedPages = _selectedCategory == 'All' 
+        ? _allPages 
+        : _allPages.where((page) => page['category'] == _selectedCategory).toList();
+
+    return Column(
       children: [
-        SizedBox(
-          height: 40,
-          child: ListView(
+        Container(
+          height: 60,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: ListView.builder(
             scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: _categories.length,
+            itemBuilder: (context, index) {
+              final cat = _categories[index];
+              return _buildCategoryChip(cat, _selectedCategory == cat);
+            },
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              _buildCategoryChip('Business', true),
-              _buildCategoryChip('Music', false),
-              _buildCategoryChip('Sports', false),
-              _buildCategoryChip('Gaming', false),
-              _buildCategoryChip('Art', false),
+              Text(
+                'Suggested Pages', 
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)
+              ),
+              const SizedBox(height: 12),
+              if (displayedPages.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Text('No pages found for $_selectedCategory', style: TextStyle(color: Colors.grey)),
+                  ),
+                )
+              else
+                ...displayedPages.map((page) => 
+                  SuggestedPageCard(
+                    title: page['title']!, 
+                    category: page['category']!, 
+                    avatar: page['avatar']!, 
+                    cover: page['cover']!, 
+                    isDark: isDark
+                  )
+                ).toList(),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        Text('Suggested Pages', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-        const SizedBox(height: 12),
-        _buildSuggestedPageCard('SpaceX Fans', 'Science & Tech', AppAssets.post4, AppAssets.cover1, isDark),
-        _buildSuggestedPageCard('Healthy Living', 'Health & Wellness', AppAssets.post5, AppAssets.cover2, isDark),
-        _buildSuggestedPageCard('Modern Architecture', 'Design', AppAssets.post1, AppAssets.cover3, isDark),
       ],
     );
   }
@@ -178,7 +261,11 @@ class PagesScreen extends StatelessWidget {
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
-        onSelected: (val) {},
+        onSelected: (val) {
+          setState(() {
+            _selectedCategory = label;
+          });
+        },
         backgroundColor: Colors.grey.withOpacity(0.1),
         selectedColor: Colors.blue.withOpacity(0.2),
         labelStyle: TextStyle(
@@ -186,76 +273,7 @@ class PagesScreen extends StatelessWidget {
           fontWeight: FontWeight.bold
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide.none),
-      ),
-    );
-  }
-
-  Widget _buildSuggestedPageCard(String title, String category, String avatar, String cover, bool isDark) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(() => PageDetailScreen(
-          title: title,
-          category: category,
-          followers: '5K Followers',
-          image: avatar,
-          cover: cover,
-          isJoined: false,
-        ));
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF242526) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
-        ),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.asset(cover, height: 100, width: double.infinity, fit: BoxFit.cover),
-                ),
-                Positioned(
-                  bottom: 10, left: 16,
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: isDark ? const Color(0xFF242526) : Colors.white,
-                    child: CircleAvatar(radius: 27, backgroundImage: AssetImage(avatar)),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black)),
-                        Text(category, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.snackbar('Success', 'Liked $title', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.blue, colorText: Colors.white);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.withOpacity(0.1),
-                      foregroundColor: isDark ? Colors.white : Colors.black,
-                      elevation: 0,
-                    ),
-                    child: const Text('Like'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        checkmarkColor: Colors.blue,
       ),
     );
   }
@@ -323,6 +341,106 @@ class PagesScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SuggestedPageCard extends StatefulWidget {
+  final String title;
+  final String category;
+  final String avatar;
+  final String cover;
+  final bool isDark;
+
+  const SuggestedPageCard({
+    super.key,
+    required this.title,
+    required this.category,
+    required this.avatar,
+    required this.cover,
+    required this.isDark,
+  });
+
+  @override
+  State<SuggestedPageCard> createState() => _SuggestedPageCardState();
+}
+
+class _SuggestedPageCardState extends State<SuggestedPageCard> {
+  bool isLiked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => PageDetailScreen(
+          title: widget.title,
+          category: widget.category,
+          followers: '5K Followers',
+          image: widget.avatar,
+          cover: widget.cover,
+          isJoined: false,
+        ));
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: widget.isDark ? const Color(0xFF242526) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: Image.asset(widget.cover, height: 100, width: double.infinity, fit: BoxFit.cover),
+                ),
+                Positioned(
+                  bottom: 10, left: 16,
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: widget.isDark ? const Color(0xFF242526) : Colors.white,
+                    child: CircleAvatar(radius: 27, backgroundImage: AssetImage(widget.avatar)),
+                  ),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: widget.isDark ? Colors.white : Colors.black)),
+                        Text(widget.category, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isLiked = !isLiked;
+                      });
+                      if (isLiked) {
+                        Get.snackbar('Success', 'Liked ${widget.title}', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.blue, colorText: Colors.white, duration: const Duration(seconds: 1));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isLiked ? Colors.blue : Colors.grey.withOpacity(0.1),
+                      foregroundColor: isLiked ? Colors.white : (widget.isDark ? Colors.white : Colors.black),
+                      elevation: 0,
+                    ),
+                    child: Text(isLiked ? 'Liked' : 'Like'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -77,14 +77,18 @@ class GroupDetailScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Stack(
-                        children: [
-                          _buildMemberAvatar(AppAssets.avatar1, 0),
-                          _buildMemberAvatar(AppAssets.avatar2, 20),
-                          _buildMemberAvatar(AppAssets.avatar3, 40),
-                        ],
+                      SizedBox(
+                        width: 80,
+                        height: 30,
+                        child: Stack(
+                          children: [
+                            _buildMemberAvatar(AppAssets.avatar1, 0),
+                            _buildMemberAvatar(AppAssets.avatar2, 20),
+                            _buildMemberAvatar(AppAssets.avatar3, 40),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 50),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {

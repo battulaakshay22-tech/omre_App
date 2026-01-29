@@ -64,14 +64,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                      subtitle: const Text('Anyone can see who\'s in the group and what they post.'),
                      value: 'Public',
                      groupValue: _privacy,
-                     onChanged: (val) => setState(() => _privacy = val!),
+                     onChanged: (val) {
+                       if (val != null) setState(() => _privacy = val);
+                     },
                    ),
                    RadioListTile<String>(
                      title: const Text('Private'),
                      subtitle: const Text('Only members can see who\'s in the group and what they post.'),
                      value: 'Private',
                      groupValue: _privacy,
-                     onChanged: (val) => setState(() => _privacy = val!),
+                     onChanged: (val) {
+                       if (val != null) setState(() => _privacy = val);
+                     },
                    ),
                 ],
               ),
