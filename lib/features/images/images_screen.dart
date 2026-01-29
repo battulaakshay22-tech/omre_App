@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../core/constants/app_assets.dart';
+import '../explore/image_detail_screen.dart';
 
 class ImagesScreen extends StatelessWidget {
   const ImagesScreen({super.key});
@@ -34,7 +35,19 @@ class ImagesScreen extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                 Get.bottomSheet(
+                   Container(
+                     color: isDark ? Colors.grey[900] : Colors.white,
+                     child: Wrap(
+                       children: [
+                         ListTile(leading: const Icon(Icons.camera_alt), title: const Text('Take Photo'), onTap: () => Get.back()),
+                         ListTile(leading: const Icon(Icons.photo_library), title: const Text('Upload from Gallery'), onTap: () => Get.back()),
+                       ],
+                     ),
+                   ),
+                 );
+              },
               child: const Text('Add', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -67,13 +80,19 @@ class ImagesScreen extends StatelessWidget {
       crossAxisSpacing: 4,
       itemCount: images.length,
       itemBuilder: (context, index) {
+        final img = images[index % images.length];
         return GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Get.to(() => ImageDetailScreen(imageUrl: img));
+          },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(0), // Facebook uses square tiles often
-            child: Image.asset(
-              images[index % images.length],
-              fit: BoxFit.cover,
+            child: Hero(
+              tag: img,
+              child: Image.asset(
+                img,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         );
@@ -100,37 +119,42 @@ class ImagesScreen extends StatelessWidget {
       itemCount: albums.length,
       itemBuilder: (context, index) {
         final album = albums[index];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: AssetImage(album['image']!),
-                    fit: BoxFit.cover,
+        return GestureDetector(
+          onTap: () {
+            Get.snackbar('Album', 'Opening ${album['title']}...', snackPosition: SnackPosition.BOTTOM);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: AssetImage(album['image']!),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              album['title']!,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: isDark ? Colors.white : Colors.black,
+              const SizedBox(height: 8),
+              Text(
+                album['title']!,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
               ),
-            ),
-            Text(
-              '${album['count']} items',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
+              Text(
+                '${album['count']} items',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
