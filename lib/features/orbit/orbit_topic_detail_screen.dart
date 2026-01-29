@@ -17,16 +17,6 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
   late List<Map<String, dynamic>> _posts;
   String _selectedFilter = 'All';
 
-  // Theme constants based on the design request
-  final Color bgColor = const Color(0xFF0F0F12);
-  final Color cardColor = const Color(0xFF1A1A1D);
-  final Color accentBlue = const Color(0xFF2962FF);
-  final Color textPrimary = Colors.white;
-  final Color textSecondary = const Color(0xFFB0BEC5);
-  final Color verifiedColor = const Color(0xFF9C27B0); // Purple for insight/verified
-  final Color sourceColor = const Color(0xFF1565C0); // Blue for source
-  final Color contributorColor = const Color(0xFFFF6D00); // Orange for question/contributor
-
   @override
   void initState() {
     super.initState();
@@ -39,7 +29,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     super.dispose();
   }
 
-  void _handlePost() {
+  void _handlePost(Color cardColor, Color textPrimary) {
     if (_messageController.text.trim().isEmpty) return;
 
     final newPost = {
@@ -58,7 +48,6 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
       _messageController.clear();
     });
 
-    // Scroll to bottom logic could be added here if we had a ScrollController
     Get.snackbar('Posted', 'Your contribution is live!', 
       snackPosition: SnackPosition.BOTTOM, 
       backgroundColor: cardColor, 
@@ -75,13 +64,26 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Theme-aware colors
+    final bgColor = theme.scaffoldBackgroundColor;
+    final cardColor = isDark ? const Color(0xFF1A1A1D) : Colors.white;
+    final accentBlue = isDark ? const Color(0xFF2962FF) : theme.primaryColor;
+    final textPrimary = theme.textTheme.bodyLarge?.color ?? (isDark ? Colors.white : Colors.black);
+    final textSecondary = theme.textTheme.bodyMedium?.color?.withOpacity(0.7) ?? (isDark ? const Color(0xFFB0BEC5) : Colors.black54);
+    final verifiedColor = isDark ? const Color(0xFFBB86FC) : Colors.purple;
+    final sourceColor = isDark ? const Color(0xFF64B5F6) : Colors.blue[800]!;
+    final contributorColor = isDark ? const Color(0xFFFFB74D) : Colors.orange[800]!;
+
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(bgColor, textPrimary, textSecondary, cardColor),
       body: Column(
         children: [
           // Signal Filters
-          _buildSignalFilters(),
+          _buildSignalFilters(bgColor, textSecondary, accentBlue, cardColor),
           
           // Discussion List
           Expanded(
@@ -104,6 +106,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     reputation: post['reputation'],
                     agreements: post['agreements'],
                     avatar: post['avatar'],
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                    verifiedColor: verifiedColor,
                   );
                 } else if (post['type'] == 'source') {
                   return _buildSourcePost(
@@ -114,6 +119,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     content: post['content'],
                     link: post['link'],
                     avatar: post['avatar'],
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                    sourceColor: sourceColor,
                   );
                 } else {
                   return _buildContributorPost(
@@ -125,6 +133,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     hearts: post['hearts'],
                     avatar: post['avatar'],
                     image: post['image'],
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                    contributorColor: contributorColor,
                   );
                 }
               },
@@ -132,18 +143,18 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
           ),
           
           // Input Area
-          _buildInputArea(),
+          _buildInputArea(cardColor, textPrimary, textSecondary, accentBlue),
         ],
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(Color bgColor, Color textPrimary, Color textSecondary, Color cardColor) {
     return AppBar(
       backgroundColor: bgColor,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: Icon(Icons.arrow_back, color: textPrimary),
         onPressed: () => Get.back(),
       ),
       title: Column(
@@ -178,7 +189,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                 Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: textPrimary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -196,9 +207,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
              padding: const EdgeInsets.all(2),
              decoration: BoxDecoration(
                shape: BoxShape.circle,
-               border: Border.all(color: Colors.white, width: 1.5),
+               border: Border.all(color: textPrimary, width: 1.5),
              ),
-            child: const Icon(Icons.more_horiz, color: Colors.white, size: 20)
+            child: Icon(Icons.more_horiz, color: textPrimary, size: 20)
           ),
           onPressed: () {
             Get.bottomSheet(
@@ -212,8 +223,8 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.notifications_off_outlined, color: Colors.white),
-                        title: const Text('Mute Topic', style: TextStyle(color: Colors.white)),
+                        leading: Icon(Icons.notifications_off_outlined, color: textPrimary),
+                        title: Text('Mute Topic', style: TextStyle(color: textPrimary)),
                         onTap: () {
                           Get.back();
                           Get.snackbar('Muted', 'You will no longer receive notifications for this topic.',
@@ -224,11 +235,11 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.share_outlined, color: Colors.white),
-                         title: const Text('Share Topic', style: TextStyle(color: Colors.white)),
+                        leading: Icon(Icons.share_outlined, color: textPrimary),
+                         title: Text('Share Topic', style: TextStyle(color: textPrimary)),
                         onTap: () {
                           Get.back();
-                          _showShareOptions();
+                          _showShareOptions(cardColor, textPrimary, textSecondary);
                         },
                       ),
                       ListTile(
@@ -236,7 +247,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                         title: const Text('Report', style: TextStyle(color: Colors.red)),
                          onTap: () {
                            Get.back();
-                           _showReportDialog();
+                           _showReportDialog(cardColor, textPrimary, textSecondary);
                          },
                       ),
                     ],
@@ -250,7 +261,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _showShareOptions() {
+  void _showShareOptions(Color cardColor, Color textPrimary, Color textSecondary) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
@@ -268,10 +279,10 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
               spacing: 20,
               runSpacing: 20,
               children: [
-                _buildShareIcon(Icons.copy, 'Copy Link', Colors.grey),
-                _buildShareIcon(Icons.chat_bubble, 'WhatsApp', Colors.green),
-                _buildShareIcon(Icons.send, 'Telegram', Colors.blue),
-                _buildShareIcon(Icons.alternate_email, 'Twitter', Colors.lightBlue),
+                _buildShareIcon(Icons.copy, 'Copy Link', Colors.grey, cardColor, textPrimary, textSecondary),
+                _buildShareIcon(Icons.chat_bubble, 'WhatsApp', Colors.green, cardColor, textPrimary, textSecondary),
+                _buildShareIcon(Icons.send, 'Telegram', Colors.blue, cardColor, textPrimary, textSecondary),
+                _buildShareIcon(Icons.alternate_email, 'Twitter', Colors.lightBlue, cardColor, textPrimary, textSecondary),
               ],
             ),
             const SizedBox(height: 16),
@@ -281,7 +292,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  Widget _buildShareIcon(IconData icon, String label, Color color) {
+  Widget _buildShareIcon(IconData icon, String label, Color color, Color cardColor, Color textPrimary, Color textSecondary) {
     return GestureDetector(
       onTap: () {
         Get.back();
@@ -305,7 +316,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _showReportDialog() {
+  void _showReportDialog(Color cardColor, Color textPrimary, Color textSecondary) {
     Get.dialog(
       AlertDialog(
         backgroundColor: cardColor,
@@ -313,10 +324,10 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildReportOption('Spam or misleading'),
-            _buildReportOption('Harassment or hate speech'),
-            _buildReportOption('Inappropriate content'),
-            _buildReportOption('Other'),
+            _buildReportOption('Spam or misleading', cardColor, textPrimary, textSecondary),
+            _buildReportOption('Harassment or hate speech', cardColor, textPrimary, textSecondary),
+            _buildReportOption('Inappropriate content', cardColor, textPrimary, textSecondary),
+            _buildReportOption('Other', cardColor, textPrimary, textSecondary),
           ],
         ),
         actions: [
@@ -329,7 +340,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  Widget _buildReportOption(String reason) {
+  Widget _buildReportOption(String reason, Color cardColor, Color textPrimary, Color textSecondary) {
     return ListTile(
       title: Text(reason, style: TextStyle(color: textSecondary)),
       onTap: () {
@@ -343,30 +354,31 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  Widget _buildSignalFilters() {
+  Widget _buildSignalFilters(Color bgColor, Color textSecondary, Color accentBlue, Color cardColor) {
+    final isDark = Theme.of(Get.context!).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: bgColor,
-        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+        border: Border(bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
       ),
       child: Row(
         children: [
           Text('SIGNAL FILTER:', style: TextStyle(color: textSecondary, fontSize: 10, fontWeight: FontWeight.bold)),
           const SizedBox(width: 12),
-          _buildFilterChip('All', Icons.local_fire_department_rounded, _selectedFilter == 'All'),
+          _buildFilterChip('All', Icons.local_fire_department_rounded, _selectedFilter == 'All', accentBlue, textSecondary),
           const SizedBox(width: 8),
-          _buildFilterChip('Insights', Icons.psychology_outlined, _selectedFilter == 'Insights'),
+          _buildFilterChip('Insights', Icons.psychology_outlined, _selectedFilter == 'Insights', accentBlue, textSecondary),
           const SizedBox(width: 8),
-          _buildFilterChip('Sources', Icons.article_outlined, _selectedFilter == 'Sources'),
+          _buildFilterChip('Sources', Icons.article_outlined, _selectedFilter == 'Sources', accentBlue, textSecondary),
           const Spacer(),
           GestureDetector(
             onTap: () => Get.defaultDialog(
               title: 'Signal Filters',
               middleText: 'Use filters to focus on verified expert insights or cited sources.',
               backgroundColor: cardColor,
-              titleStyle: const TextStyle(color: Colors.white),
-              middleTextStyle: const TextStyle(color: Colors.white70),
+              titleStyle: TextStyle(color: Theme.of(Get.context!).textTheme.bodyLarge?.color),
+              middleTextStyle: TextStyle(color: Theme.of(Get.context!).textTheme.bodyMedium?.color),
               confirm: TextButton(onPressed: () => Get.back(), child: const Text('Got it')),
             ),
             child: Icon(Icons.help_outline, color: textSecondary, size: 16),
@@ -376,13 +388,13 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, IconData icon, bool isSelected) {
+  Widget _buildFilterChip(String label, IconData icon, bool isSelected, Color accentBlue, Color textSecondary) {
     return GestureDetector(
       onTap: () => setState(() => _selectedFilter = label),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF1E2235) : Colors.transparent,
+          color: isSelected ? accentBlue.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? accentBlue.withOpacity(0.5) : Colors.transparent,
@@ -415,6 +427,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     required int reputation,
     required int agreements,
      required String avatar,
+     required Color textPrimary,
+     required Color textSecondary,
+     required Color verifiedColor,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -433,7 +448,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: textPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
                       child: Text(role, style: TextStyle(color: textSecondary, fontSize: 10)),
                     ),
                     const SizedBox(width: 8),
@@ -487,6 +502,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     required int hearts,
      required String avatar,
      String? image,
+     required Color textPrimary,
+     required Color textSecondary,
+     required Color contributorColor,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -503,9 +521,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                   children: [
                     Flexible(child: Text(name, style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 15), overflow: TextOverflow.ellipsis)),
                     const SizedBox(width: 8),
-                     Container(
+                    Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: textPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
                       child: Text(role, style: TextStyle(color: textSecondary, fontSize: 10)),
                     ),
                     const SizedBox(width: 8),
@@ -561,6 +579,9 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     required String content,
     required String link,
      required String avatar,
+     required Color textPrimary,
+     required Color textSecondary,
+     required Color sourceColor,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -579,7 +600,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                     const SizedBox(width: 8),
                      Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: textPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
                       child: Text(role, style: TextStyle(color: textSecondary, fontSize: 10)),
                     ),
                     const SizedBox(width: 8),
@@ -594,7 +615,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                       ),
                       child: Row(
                         children: [
-                         const Icon(Icons.description_outlined, size: 12, color: Color(0xFF1565C0)), // Hardcoded for const
+                         Icon(Icons.description_outlined, size: 12, color: sourceColor),
                           const SizedBox(width: 4),
                           Text(tag, style: TextStyle(color: sourceColor, fontSize: 10, fontWeight: FontWeight.bold)),
                         ],
@@ -628,7 +649,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     }
   }
 
-  void _handleLanguage() {
+  void _handleLanguage(Color cardColor, Color textPrimary, Color textSecondary, Color accentBlue, Color bgColor) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
@@ -672,7 +693,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _handleAttachment() {
+  void _handleAttachment(Color cardColor, Color textPrimary, Color textSecondary, Color accentBlue, Color bgColor) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
@@ -690,23 +711,23 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
               children: [
                 _buildAttachmentOption(Icons.image, 'Gallery', () {
                     Get.back();
-                    _openMockGallery();
-                }),
+                    _openMockGallery(cardColor, textPrimary);
+                }, accentBlue, bgColor, textSecondary),
                 _buildAttachmentOption(Icons.camera_alt, 'Camera', () {
                     Get.back();
-                    _openMockCamera();
-                }),
+                    _openMockCamera(cardColor, textPrimary, accentBlue);
+                }, accentBlue, bgColor, textSecondary),
                 _buildAttachmentOption(Icons.insert_drive_file, 'File', () {
                     Get.back();
-                     _openMockFilePicker();
-                }),
+                     _openMockFilePicker(cardColor, textPrimary, textSecondary);
+                }, accentBlue, bgColor, textSecondary),
                 _buildAttachmentOption(Icons.link, 'Link', () {
                     Get.back();
                     // Simulating link paste
                     setState(() {
                        _messageController.text = "https://omre.app/share/ref=123";
                     });
-                }),
+                }, accentBlue, bgColor, textSecondary),
               ],
             ),
             const SizedBox(height: 20),
@@ -716,7 +737,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _openMockGallery() {
+  void _openMockGallery(Color cardColor, Color textPrimary) {
     Get.bottomSheet(
       Container(
         height: 400,
@@ -764,7 +785,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _openMockCamera() {
+  void _openMockCamera(Color cardColor, Color textPrimary, Color accentBlue) {
     Get.dialog(
       AlertDialog(
         backgroundColor: cardColor,
@@ -802,7 +823,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _openMockFilePicker() {
+  void _openMockFilePicker(Color cardColor, Color textPrimary, Color textSecondary) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
@@ -858,7 +879,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     });
   }
 
-  Widget _buildAttachmentOption(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildAttachmentOption(IconData icon, String label, VoidCallback onTap, Color accentBlue, Color bgColor, Color textSecondary) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -876,7 +897,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     );
   }
 
-  void _handleVoice() {
+  void _handleVoice(Color cardColor, Color textPrimary) {
     Get.dialog(
       AlertDialog(
         backgroundColor: cardColor,
@@ -898,21 +919,24 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
     });
   }
 
-  Widget _buildInputArea() {
+  Widget _buildInputArea(Color cardColor, Color textPrimary, Color textSecondary, Color accentBlue) {
+    final theme = Theme.of(Get.context!);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F12),
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+        color: theme.scaffoldBackgroundColor,
+        border: Border(top: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E24),
+              color: isDark ? const Color(0xFF1E1E24) : Colors.grey[100],
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Row(
               children: [
@@ -933,14 +957,14 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
            const SizedBox(height: 12),
           Row(
             children: [
-              IconButton(onPressed: _handleLanguage, icon: Icon(Icons.language, color: textSecondary, size: 20)),
+              IconButton(onPressed: () => _handleLanguage(cardColor, textPrimary, textSecondary, accentBlue, theme.scaffoldBackgroundColor), icon: Icon(Icons.language, color: textSecondary, size: 20)),
               const SizedBox(width: 8),
-              IconButton(onPressed: _handleAttachment, icon: Icon(Icons.library_books_outlined, color: textSecondary, size: 20)),
+              IconButton(onPressed: () => _handleAttachment(cardColor, textPrimary, textSecondary, accentBlue, theme.scaffoldBackgroundColor), icon: Icon(Icons.library_books_outlined, color: textSecondary, size: 20)),
                const SizedBox(width: 8),
-              IconButton(onPressed: _handleVoice, icon: Icon(Icons.mic_none, color: textSecondary, size: 20)),
+              IconButton(onPressed: () => _handleVoice(cardColor, textPrimary), icon: Icon(Icons.mic_none, color: textSecondary, size: 20)),
               const Spacer(),
               GestureDetector(
-                onTap: _handlePost,
+                onTap: () => _handlePost(cardColor, textPrimary),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
@@ -972,7 +996,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
                   style: TextStyle(color: textSecondary, fontSize: 10),
                   children: [
                     const TextSpan(text: 'Your reputation in '),
-                    TextSpan(text: widget.topic.category, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    TextSpan(text: widget.topic.category, style: TextStyle(fontWeight: FontWeight.bold, color: textPrimary)),
                     const TextSpan(text: ' influences visibility.'),
                   ],
                 ),
