@@ -160,7 +160,7 @@ class MeetingJoinScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Icon(Icons.videocam_outlined, size: 80, color: Colors.blue.withAlpha(153)),
+            Image.asset('assets/images/meeting_icon_3d.png', width: 80, height: 80),
             const SizedBox(height: 24),
             Text(
               'Enter Meeting Details',

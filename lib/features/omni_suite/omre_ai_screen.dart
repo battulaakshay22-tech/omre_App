@@ -2,15 +2,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../core/constants/app_assets.dart';
 
-class OmniAIScreen extends StatefulWidget {
-  const OmniAIScreen({super.key});
+class OmreAIScreen extends StatefulWidget {
+  const OmreAIScreen({super.key});
 
   @override
-  State<OmniAIScreen> createState() => _OmniAIScreenState();
+  State<OmreAIScreen> createState() => _OmreAIScreenState();
 }
 
-class _OmniAIScreenState extends State<OmniAIScreen> {
+class _OmreAIScreenState extends State<OmreAIScreen> {
   // Expansion states for inline modules
   final Map<String, bool> _expansionStates = {};
 
@@ -181,7 +182,7 @@ class _OmniAIScreenState extends State<OmniAIScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TITANCONNECT',
+            'OMRE AI',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
@@ -497,6 +498,7 @@ class _OmniAIScreenState extends State<OmniAIScreen> {
           _buildGovItem('AI Ethics Audit', 'Verified Transparent'),
         ],
       ),
+      assetPath: AppAssets.townHallIcon3d,
     );
   }
 
@@ -612,7 +614,7 @@ class _OmniAIScreenState extends State<OmniAIScreen> {
     );
   }
 
-  Widget _buildExpandableModule(String key, String title, String sub, IconData icon, Color color, Widget content) {
+  Widget _buildExpandableModule(String key, String title, String sub, IconData icon, Color color, Widget content, {String? assetPath}) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     bool isExp = _expansionStates[key] ?? false;
     return Container(
@@ -634,7 +636,9 @@ class _OmniAIScreenState extends State<OmniAIScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
-                    child: Icon(icon, size: 20, color: color),
+                    child: assetPath != null
+                        ? Image.asset(assetPath, width: 20, height: 20)
+                        : Icon(icon, size: 20, color: color),
                   ),
                   const SizedBox(width: 20),
                   Expanded(

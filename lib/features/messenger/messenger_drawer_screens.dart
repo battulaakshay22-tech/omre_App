@@ -197,13 +197,15 @@ class ChannelDetailScreen extends StatelessWidget {
   final String followers;
   final IconData icon;
   final Color color;
+  final String? assetPath;
 
   const ChannelDetailScreen({
     super.key, 
     required this.name, 
     required this.followers, 
     required this.icon, 
-    required this.color
+    required this.color,
+    this.assetPath,
   });
 
   @override
@@ -224,7 +226,9 @@ class ChannelDetailScreen extends StatelessWidget {
               background: Container(
                 color: color.withOpacity(0.8),
                 child: Center(
-                  child: Icon(icon, size: 80, color: Colors.white.withOpacity(0.5)),
+                  child: assetPath != null
+                      ? Image.asset(assetPath!, width: 80, height: 80)
+                      : Icon(icon, size: 80, color: Colors.white.withOpacity(0.5)),
                 ),
               ),
             ),
@@ -359,7 +363,7 @@ class FindChannelsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _buildDiscoverChannel(context, 'Real Madrid CF', '124M followers', Icons.sports_soccer, Colors.purple),
-                _buildDiscoverChannel(context, 'Netflix', '56M followers', Icons.movie, Colors.red),
+                _buildDiscoverChannel(context, 'Netflix', '56M followers', Icons.movie, Colors.red, assetPath: AppAssets.watchIcon3d),
               ],
             ),
           ),
@@ -368,9 +372,14 @@ class FindChannelsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDiscoverChannel(BuildContext context, String name, String followers, IconData icon, Color color) {
+  Widget _buildDiscoverChannel(BuildContext context, String name, String followers, IconData icon, Color color, {String? assetPath}) {
     return ListTile(
-      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color)),
+      leading: CircleAvatar(
+        backgroundColor: color.withOpacity(0.1),
+        child: assetPath != null
+            ? Image.asset(assetPath, width: 20, height: 20)
+            : Icon(icon, color: color),
+      ),
       title: Text(name),
       subtitle: Text(followers),
       trailing: const Icon(Icons.add),
@@ -444,7 +453,9 @@ class CommunityDetailScreen extends StatelessWidget {
     required this.icon, 
     required this.color,
     required this.subgroups,
+    this.assetPath,
   });
+  final String? assetPath;
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +479,11 @@ class CommunityDetailScreen extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: Center(child: Icon(icon, size: 64, color: Colors.white.withOpacity(0.4))),
+                child: Center(
+                  child: assetPath != null
+                      ? Image.asset(assetPath!, width: 64, height: 64)
+                      : Icon(icon, size: 64, color: Colors.white.withOpacity(0.4)),
+                ),
               ),
               title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
@@ -520,7 +535,7 @@ class CommunityDetailScreen extends StatelessWidget {
                     color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: ListTile(
-                      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(Icons.groups, color: color, size: 20)),
+                      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Image.asset(AppAssets.groupsIcon3d, width: 20, height: 20)),
                       title: Text(sub, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                       subtitle: const Text('24 new messages', style: TextStyle(color: Colors.blue, fontSize: 11)),
                       trailing: const Icon(Icons.chevron_right, size: 18),
@@ -590,7 +605,7 @@ class MessengerCommunitiesScreen extends StatelessWidget {
             
             _buildCommunitySectionHeader('MY COMMUNITIES'),
             _buildCommunityLargeItem(context, 'Developers Circle', '125K Members', Icons.code, Colors.indigo, ['Web Devs', 'Mobile App Devs', 'Cloud Architects'], isDark),
-            _buildCommunityLargeItem(context, 'Gaming Universe', '2.5M Members', Icons.sports_esports, Colors.purple, ['FPS Pro League', 'RPG Adventurers'], isDark),
+            _buildCommunityLargeItem(context, 'Gaming Universe', '2.5M Members', Icons.sports_esports, Colors.purple, ['FPS Pro League', 'RPG Adventurers'], isDark, assetPath: 'assets/images/games_icon_3d.png'),
             _buildCommunityLargeItem(context, 'Creative Hub', '45K Members', Icons.palette, Colors.pink, ['Digital Art', 'Photography'], isDark),
             
             const SizedBox(height: 20),
@@ -613,7 +628,7 @@ class MessengerCommunitiesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCommunityLargeItem(BuildContext context, String name, String members, IconData icon, Color color, List<String> subgroups, bool isDark) {
+  Widget _buildCommunityLargeItem(BuildContext context, String name, String members, IconData icon, Color color, List<String> subgroups, bool isDark, {String? assetPath}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Container(
@@ -629,7 +644,7 @@ class MessengerCommunitiesScreen extends StatelessWidget {
             onExpansionChanged: (val) {
                // Logic to expand/collapse
             },
-            leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color, size: 24)),
+            leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: assetPath != null ? Image.asset(assetPath, width: 24, height: 24) : Icon(icon, color: color, size: 24)),
             title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(members, style: const TextStyle(fontSize: 12, color: Colors.grey)),
             children: [

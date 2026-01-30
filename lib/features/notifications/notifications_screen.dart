@@ -36,9 +36,9 @@ class NotificationsScreen extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  _buildHeaderButton(Icons.search, isDark),
+                  _buildHeaderButton(Image.asset('assets/images/search_icon_3d.png', width: 20, height: 20), isDark),
                   const SizedBox(width: 12),
-                  _buildHeaderButton(Icons.settings, isDark),
+                  _buildHeaderButton(Image.asset('assets/images/setting_icon_3d.png', width: 20, height: 20), isDark),
                 ],
               ),
             ),
@@ -75,14 +75,14 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderButton(IconData icon, bool isDark) {
+  Widget _buildHeaderButton(Widget iconWidget, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        icon: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+        icon: iconWidget,
         onPressed: () {},
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(minWidth: 36, minHeight: 36),

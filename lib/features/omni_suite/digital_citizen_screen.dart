@@ -488,13 +488,13 @@ class _DigitalCitizenScreenState extends State<DigitalCitizenScreen> {
         children: [
           _buildCitizenBadge('Trusted Citizen', Icons.shield, Colors.blueAccent),
           _buildCitizenBadge('Truth Anchor', Icons.anchor, Colors.purpleAccent),
-          _buildCitizenBadge('Civic Pioneer', Icons.rocket_launch, Colors.tealAccent),
+          _buildCitizenBadge('Civic Pioneer', Icons.rocket_launch, Colors.tealAccent, assetPath: 'assets/images/orbit_icon_3d.png'),
         ],
       ),
     );
   }
 
-  Widget _buildCitizenBadge(String label, IconData icon, Color color) {
+  Widget _buildCitizenBadge(String label, IconData icon, Color color, {String? assetPath}) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -505,7 +505,9 @@ class _DigitalCitizenScreenState extends State<DigitalCitizenScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 16),
+          assetPath != null
+              ? Image.asset(assetPath, width: 16, height: 16)
+              : Icon(icon, color: color, size: 16),
           const SizedBox(width: 10),
           Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
         ],

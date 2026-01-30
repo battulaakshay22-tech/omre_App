@@ -52,9 +52,9 @@ class OrbitExploreScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle('Trending Topics', theme),
-            _buildTrendingTile('SpaceX Mars Mission', '45.2K posts', Icons.rocket_launch, Colors.deepPurple),
+            _buildTrendingTile('SpaceX Mars Mission', '45.2K posts', Icons.rocket_launch, Colors.deepPurple, assetPath: 'assets/images/orbit_icon_3d.png'),
             _buildTrendingTile('Flutter 3.16 Release', '32.1K posts', Icons.flutter_dash, Colors.blue),
-            _buildTrendingTile('Global Economic Summit', '28.5K posts', Icons.public, Colors.green),
+            _buildTrendingTile('Global News', '28.5K posts', Icons.public, Colors.green, assetPath: 'assets/images/orbit_icon_3d.png'),
             
             _buildSectionTitle('Recommended Spaces', theme),
             SizedBox(
@@ -81,12 +81,14 @@ class OrbitExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingTile(String title, String posts, IconData icon, Color color) {
+  Widget _buildTrendingTile(String title, String posts, IconData icon, Color color, {String? assetPath}) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: color, size: 20),
+        child: assetPath != null
+            ? Image.asset(assetPath, width: 20, height: 20)
+            : Icon(icon, color: color, size: 20),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
       subtitle: Text(posts, style: const TextStyle(color: Colors.grey, fontSize: 13)),
@@ -330,8 +332,8 @@ class OrbitCommunitiesScreen extends StatelessWidget {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: [
-          _buildCommunityCard('Global News', '5M followers', Icons.public, Colors.blue),
-          _buildCommunityCard('Gaming Zone', '2.5M followers', Icons.sports_esports, Colors.purple),
+          _buildCommunityCard('Global News', '5M followers', Icons.public, Colors.blue, assetPath: 'assets/images/orbit_icon_3d.png'),
+          _buildCommunityCard('Gaming Zone', '2.5M followers', Icons.sports_esports, Colors.purple, assetPath: 'assets/images/games_icon_3d.png'),
           _buildCommunityCard('Foodies', '1.2M followers', Icons.restaurant, Colors.orange),
           _buildCommunityCard('Photography', '800K followers', Icons.camera_alt, Colors.pink),
           _buildCommunityCard('Music Junkies', '1.5M followers', Icons.music_note, Colors.indigo),
@@ -341,7 +343,7 @@ class OrbitCommunitiesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCommunityCard(String name, String followers, IconData icon, Color color) {
+  Widget _buildCommunityCard(String name, String followers, IconData icon, Color color, {String? assetPath}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -352,7 +354,9 @@ class OrbitCommunitiesScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 40),
+          assetPath != null
+              ? Image.asset(assetPath, width: 40, height: 40)
+              : Icon(icon, color: color, size: 40),
           const SizedBox(height: 12),
           Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.center),
           const SizedBox(height: 4),
@@ -426,20 +430,22 @@ class OrbitBookmarksScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _buildBookmarkTile('10 Flutter best practices for 2026', 'Saved 2 days ago', Icons.article_outlined, Colors.blue),
-          _buildBookmarkTile('SpaceX Starship reaching orbit!', 'Saved 5 days ago', Icons.videocam_outlined, Colors.deepPurple),
+          _buildBookmarkTile('SpaceX Starship reaching orbit!', 'Saved 5 days ago', Icons.videocam_outlined, Colors.deepPurple, assetPath: 'assets/images/video_icon_3d.png'),
           _buildBookmarkTile('Market trends in Q1 2026', 'Saved 1 week ago', Icons.insert_chart_outlined, Colors.green),
         ],
       ),
     );
   }
 
-  Widget _buildBookmarkTile(String title, String time, IconData icon, Color color) {
+  Widget _buildBookmarkTile(String title, String time, IconData icon, Color color, {String? assetPath}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.2)), borderRadius: BorderRadius.circular(16)),
       child: ListTile(
-        leading: Icon(icon, color: color),
+        leading: assetPath != null
+            ? Image.asset(assetPath, width: 24, height: 24)
+            : Icon(icon, color: color),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
         subtitle: Text(time, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         trailing: const Icon(Icons.bookmark_remove, color: Colors.grey, size: 20),
@@ -484,7 +490,7 @@ class OrbitProfileScreen extends StatelessWidget {
             
             const SizedBox(height: 32),
             _buildSectionTitle('Active In', theme),
-            _buildCommunityTile('Space Enthusiasts', 'Member since 2024', Icons.rocket, Colors.deepPurple),
+            _buildCommunityTile('Space Enthusiasts', 'Member since 2024', Icons.rocket, Colors.deepPurple, assetPath: 'assets/images/orbit_icon_3d.png'),
             _buildCommunityTile('Flutter Community', 'Member since 2023', Icons.flutter_dash, Colors.blue),
             const SizedBox(height: 40),
           ],
@@ -504,9 +510,9 @@ class OrbitProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCommunityTile(String name, String status, IconData icon, Color color) {
+  Widget _buildCommunityTile(String name, String status, IconData icon, Color color, {String? assetPath}) {
     return ListTile(
-      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color, size: 20)),
+      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: assetPath != null ? Image.asset(assetPath, width: 20, height: 20) : Icon(icon, color: color, size: 20)),
       title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
       subtitle: Text(status, style: const TextStyle(color: Colors.grey, fontSize: 13)),
     );

@@ -174,7 +174,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
           const SizedBox(height: 2),
             Row(
             children: [
-                Icon(Icons.people_alt_rounded, size: 12, color: textSecondary),
+                Image.asset(AppAssets.friendsIcon3d, width: 12, height: 12),
                 const SizedBox(width: 4),
                 Text(
                 '${widget.topic.liveUsers} live',
@@ -989,7 +989,7 @@ class _OrbitTopicDetailScreenState extends State<OrbitTopicDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.people_outline, size: 12, color: textSecondary),
+              Image.asset(AppAssets.friendsIcon3d, width: 12, height: 12),
               const SizedBox(width: 4),
               RichText(
                 text: TextSpan(

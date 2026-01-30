@@ -159,7 +159,7 @@ class VideoLibraryScreen extends StatelessWidget {
           _buildLibraryItem(context, Icons.history, 'History', '120 videos'),
           _buildLibraryItem(context, Icons.play_circle_outline, 'Your Videos', '5 videos'),
           _buildLibraryItem(context, Icons.download_done_outlined, 'Downloads', '12 videos'),
-          _buildLibraryItem(context, Icons.movie_creation_outlined, 'Your Movies', '2 movies'),
+          _buildLibraryItem(context, Icons.movie_creation_outlined, 'Your Movies', '2 movies', assetPath: AppAssets.watchIcon3d),
           const Divider(height: 32),
           const Text('Playlists', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 16),
@@ -171,9 +171,11 @@ class VideoLibraryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLibraryItem(BuildContext context, IconData icon, String title, String subtitle) {
+  Widget _buildLibraryItem(BuildContext context, IconData icon, String title, String subtitle, {String? assetPath}) {
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).iconTheme.color),
+      leading: assetPath != null
+          ? Image.asset(assetPath, width: 24, height: 24)
+          : Icon(icon, color: Theme.of(context).iconTheme.color),
       title: Text(title),
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
       onTap: () {},

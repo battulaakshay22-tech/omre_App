@@ -89,6 +89,7 @@ class MeetingScreen extends StatelessWidget {
                     Icons.videocam,
                     const Color(0xFFFE5722),
                     onTap: () => _onNewMeeting(context, controller),
+                    assetPath: 'assets/images/meeting_icon_3d.png',
                   ),
                   _buildActionCard(
                     'Join',
@@ -395,7 +396,8 @@ class MeetingScreen extends StatelessWidget {
               'Start an instant meeting', 
               'Join the meeting immediately', 
               isDark,
-              onTap: () => controller.startInstantMeeting()
+              onTap: () => controller.startInstantMeeting(),
+              assetPath: 'assets/images/meeting_icon_3d.png',
             ),
             const SizedBox(height: 24),
             _buildModalOption(
@@ -540,7 +542,7 @@ class MeetingScreen extends StatelessWidget {
     );
   }
 
-   Widget _buildModalOption(IconData icon, String title, String subtitle, bool isDark, {VoidCallback? onTap}) {
+   Widget _buildModalOption(IconData icon, String title, String subtitle, bool isDark, {VoidCallback? onTap, String? assetPath}) {
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey : Colors.grey[700];
 
@@ -555,7 +557,9 @@ class MeetingScreen extends StatelessWidget {
               color: isDark ? Colors.white.withAlpha(13) : Colors.black.withAlpha(13),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
+            child: assetPath != null
+                ? Image.asset(assetPath, width: 24, height: 24)
+                : Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
           ),
           const SizedBox(width: 20),
           Expanded(
@@ -573,7 +577,7 @@ class MeetingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionCard(String title, IconData icon, Color color, {required VoidCallback onTap}) {
+  Widget _buildActionCard(String title, IconData icon, Color color, {required VoidCallback onTap, String? assetPath}) {
      return GestureDetector(
        onTap: onTap,
        child: Container(
@@ -587,7 +591,9 @@ class MeetingScreen extends StatelessWidget {
          child: Column(
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
-             Icon(icon, color: Colors.white, size: 32),
+             assetPath != null
+                 ? Image.asset(assetPath, width: 32, height: 32)
+                 : Icon(icon, color: Colors.white, size: 32),
              const SizedBox(height: 12),
              Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
            ],

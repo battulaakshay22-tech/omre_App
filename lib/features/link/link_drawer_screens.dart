@@ -58,22 +58,24 @@ class LinkMyNetworkScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildNetworkItem('Connections', '528', Icons.people),
+          _buildNetworkItem('Connections', '528', Icons.people, assetPath: AppAssets.friendsIcon3d),
           _buildNetworkItem('Contacts', '1.2k', Icons.contact_page),
-          _buildNetworkItem('People | Follow', '150', Icons.person_add),
-          _buildNetworkItem('Groups', '12', Icons.groups),
+          _buildNetworkItem('People | Follow', '150', Icons.person_add, assetPath: AppAssets.friendsIcon3d),
+          _buildNetworkItem('Groups', '12', Icons.groups, assetPath: AppAssets.groupsIcon3d),
           _buildNetworkItem('Events', '3', Icons.event),
-          _buildNetworkItem('Pages', '45', Icons.article),
-          _buildNetworkItem('Newsletters', '8', Icons.newspaper),
+          _buildNetworkItem('Pages', '45', Icons.article, assetPath: 'assets/images/news_icon_3d.png'),
+          _buildNetworkItem('Newsletters', '8', Icons.newspaper, assetPath: 'assets/images/news_icon_3d.png'),
           _buildNetworkItem('Hashtags', '20', Icons.tag),
         ],
       ),
     );
   }
 
-  Widget _buildNetworkItem(String title, String count, IconData icon) {
+  Widget _buildNetworkItem(String title, String count, IconData icon, {String? assetPath}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
+      leading: assetPath != null
+          ? Image.asset(assetPath, width: 24, height: 24)
+          : Icon(icon, color: Colors.blue),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: Text(count, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       onTap: () {},
