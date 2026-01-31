@@ -225,7 +225,7 @@ class LinkHomeScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(child: _buildStatCard('Remote', '${controller.remoteJobsCount}', Icons.public, const Color(0xFFEC4899), isDark)),
+                        Expanded(child: _buildStatCard('Remote', '${controller.remoteJobsCount}', Icons.public, const Color(0xFFEC4899), isDark, assetPath: AppAssets.languageIcon3d)),
                         const SizedBox(width: 12),
                         Expanded(child: _buildStatCard('Avg Salary', controller.avgSalary, Icons.attach_money, const Color(0xFFFF9800), isDark)),
                       ],

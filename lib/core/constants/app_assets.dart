@@ -12,6 +12,17 @@ class AppAssets {
   static const String marketplaceIcon3d = 'assets/images/marketplace_icon_3d.png';
   static const String overviewIcon3d = 'assets/images/overview_icon_3d.png';
   static const String bizProfileIcon3d = 'assets/images/biz_profile_icon_3d.png';
+  static const String securitySafeIcon3d = 'assets/icons/security_safe.png';
+  static const String personalInfoIcon3d = 'assets/icons/personal_info.png';
+  static const String helpCenterIcon3d = 'assets/icons/help_center.png';
+  static const String languageIcon3d = 'assets/icons/language_3d.png';
+  static const String notificationIcon3d = 'assets/icons/notification_bell_3d.png';
+  static const String appearanceIcon3d = 'assets/icons/appearance_theme_3d.png';
+  static const String dataUsageIcon3d = 'assets/icons/data_usage_3d.png';
+  static const String blockedAccountsIcon3d = 'assets/icons/blocked_accounts_3d.png';
+  static const String accountPrivacyIcon3d = 'assets/icons/account_privacy_3d.png';
+  static const String exploreIcon3d = 'assets/icons/explore_3d.png';
+  static const String communitiesIcon3d = 'assets/icons/communities_3d.png';
   static const String catalogIcon3d = 'assets/images/catalog_icon_3d.png';
   static const String ordersIcon3d = 'assets/images/orders_icon_3d.png';
   static const String inboxToolsIcon3d = 'assets/images/inbox_tools_icon_3d.png';
@@ -68,7 +79,6 @@ class AppAssets {
   static const String orbitExploreIcon3d = 'assets/images/orbit_explore_icon_3d.png';
   static const String messageIcon3d = 'assets/images/message_icon_3d.png';
   static const String spacesIcon3d = 'assets/images/spaces_icon_3d.png';
-  static const String communitiesIcon3d = 'assets/images/communities_icon_3d.png';
   static const String listsIcon3d = 'assets/images/lists_icon_3d.png';
   static const String html5GamesIcon3d = 'assets/images/html5_games_icon_3d.png';
   static const String tournamentsIcon3d = 'assets/images/tournaments_icon_3d.png';

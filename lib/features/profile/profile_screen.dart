@@ -52,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 32),
           _ProfileOption(icon: Icons.settings, label: 'Settings', onTap: () => Get.to(() => const SettingsScreen()), assetPath: 'assets/images/setting_icon_3d.png'),
           _ProfileOption(icon: Icons.bookmark_outline, label: 'Saved', onTap: () => Get.to(() => const SavedScreen()), assetPath: AppAssets.savedIcon3d),
-          _ProfileOption(icon: Icons.help_outline, label: 'Help Center', onTap: () => Get.to(() => HelpCenterScreen())),
+          _ProfileOption(icon: Icons.help_outline, label: 'Help Center', onTap: () => Get.to(() => HelpCenterScreen()), assetPath: 'assets/icons/help_center.png'),
           _ProfileOption(
             icon: Icons.logout, 
             label: 'Logout', 

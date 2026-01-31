@@ -200,7 +200,7 @@ class _OmreAIScreenState extends State<OmreAIScreen> {
         ],
       ),
       actions: [
-        _buildHeaderAction(Icons.verified_user, 'Level 4', accentCyan),
+        _buildHeaderAction(Icons.verified_user, 'Level 4', accentCyan, assetPath: AppAssets.securitySafeIcon3d),
         const SizedBox(width: 8),
         _buildHeaderAction(Icons.bolt, '842', Colors.amber),
         const SizedBox(width: 16),
@@ -208,7 +208,7 @@ class _OmreAIScreenState extends State<OmreAIScreen> {
     );
   }
 
-  Widget _buildHeaderAction(IconData icon, String label, Color color) {
+  Widget _buildHeaderAction(IconData icon, String label, Color color, {String? assetPath}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -219,7 +219,9 @@ class _OmreAIScreenState extends State<OmreAIScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: color),
+          assetPath != null 
+              ? Image.asset(assetPath, width: 12, height: 12)
+              : Icon(icon, size: 12, color: color),
           const SizedBox(width: 6),
           Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color)),
         ],
@@ -562,9 +564,9 @@ class _OmreAIScreenState extends State<OmreAIScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _footerIcon(Icons.data_usage, 'Data Control', isDark),
+              _footerIcon(Icons.data_usage, 'Data Control', isDark, assetPath: AppAssets.dataUsageIcon3d),
               _footerIcon(Icons.visibility_off, 'Ad Shield', isDark),
-              _footerIcon(Icons.security, 'Decentralized', isDark),
+              _footerIcon(Icons.security, 'Decentralized', isDark, assetPath: AppAssets.securitySafeIcon3d),
             ],
           ),
           const SizedBox(height: 32),
@@ -578,10 +580,12 @@ class _OmreAIScreenState extends State<OmreAIScreen> {
     );
   }
 
-  Widget _footerIcon(IconData icon, String label, bool isDark) {
+  Widget _footerIcon(IconData icon, String label, bool isDark, {String? assetPath}) {
     return Column(
       children: [
-        Icon(icon, size: 20, color: isDark ? Colors.white24 : Colors.black26),
+        assetPath != null 
+            ? Image.asset(assetPath, width: 20, height: 20)
+            : Icon(icon, size: 20, color: isDark ? Colors.white24 : Colors.black26),
         const SizedBox(height: 8),
         Text(label, style: TextStyle(fontSize: 9, color: isDark ? Colors.white24 : Colors.black26)),
       ],

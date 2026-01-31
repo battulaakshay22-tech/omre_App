@@ -190,7 +190,7 @@ class _OmreKnowScreenState extends State<OmreKnowScreen> {
         ],
       ),
       actions: [
-        _buildHeaderAction(Icons.translate, () => _showLanguageSelector(context)),
+        _buildHeaderAction(Icons.translate, () => _showLanguageSelector(context), assetPath: AppAssets.languageIcon3d),
         _buildHeaderAction(Icons.mic_none, () {}),
         Padding(
           padding: const EdgeInsets.only(right: 16, left: 8),
@@ -216,9 +216,11 @@ class _OmreKnowScreenState extends State<OmreKnowScreen> {
     );
   }
 
-  Widget _buildHeaderAction(IconData icon, VoidCallback onTap) {
+  Widget _buildHeaderAction(IconData icon, VoidCallback onTap, {String? assetPath}) {
     return IconButton(
-      icon: Icon(icon, size: 20),
+      icon: assetPath != null 
+          ? Image.asset(assetPath, width: 20, height: 20)
+          : Icon(icon, size: 20),
       onPressed: onTap,
     );
   }
@@ -612,7 +614,7 @@ class _OmreKnowScreenState extends State<OmreKnowScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildContributorStat('Peer Reviewed', '85%', Icons.verified_user_outlined, Colors.blue),
+              _buildContributorStat('Peer Reviewed', '85%', Icons.verified_user_outlined, Colors.blue, assetPath: AppAssets.securitySafeIcon3d),
               _buildContributorStat('Institutions', '124', Icons.account_balance_outlined, Colors.purple),
               _buildContributorStat('Your Rep', '4.9', Icons.star_outline, gold),
             ],
@@ -631,10 +633,12 @@ class _OmreKnowScreenState extends State<OmreKnowScreen> {
     );
   }
 
-  Widget _buildContributorStat(String label, String val, IconData icon, Color color) {
+  Widget _buildContributorStat(String label, String val, IconData icon, Color color, {String? assetPath}) {
     return Column(
       children: [
-        Icon(icon, color: color, size: 16),
+        assetPath != null 
+            ? Image.asset(assetPath, width: 16, height: 16)
+            : Icon(icon, color: color, size: 16),
         const SizedBox(height: 6),
         Text(val, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         Text(label, style: const TextStyle(fontSize: 8, color: Colors.grey)),

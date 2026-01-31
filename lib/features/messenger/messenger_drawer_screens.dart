@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import '../../core/theme/palette.dart';
 import '../../core/constants/app_assets.dart';
 import 'dart:async';
+import 'group_detail_screen.dart';
+import 'create_community_screen.dart';
+import 'create_status_screen.dart';
 
 // --- Shared Components for Messenger Drawer Screens ---
 
@@ -159,6 +162,9 @@ class MessengerStatusScreen extends StatelessWidget {
             ),
             title: Text('My Status', style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
             subtitle: const Text('Tap to add status update'),
+            onTap: () {
+              Get.to(() => const CreateStatusScreen());
+            },
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
@@ -192,7 +198,7 @@ class MessengerStatusScreen extends StatelessWidget {
 
 // --- Channel Detail Screen ---
 
-class ChannelDetailScreen extends StatelessWidget {
+class ChannelDetailScreen extends StatefulWidget {
   final String name;
   final String followers;
   final IconData icon;
@@ -209,6 +215,13 @@ class ChannelDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<ChannelDetailScreen> createState() => _ChannelDetailScreenState();
+}
+
+class _ChannelDetailScreenState extends State<ChannelDetailScreen> {
+  bool isFollowing = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -220,15 +233,15 @@ class ChannelDetailScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: color,
+            backgroundColor: widget.color,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
+              title: Text(widget.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
               background: Container(
-                color: color.withOpacity(0.8),
+                color: widget.color.withOpacity(0.8),
                 child: Center(
-                  child: assetPath != null
-                      ? Image.asset(assetPath!, width: 80, height: 80)
-                      : Icon(icon, size: 80, color: Colors.white.withOpacity(0.5)),
+                  child: widget.assetPath != null
+                      ? Image.asset(widget.assetPath!, width: 80, height: 80)
+                      : Icon(widget.icon, size: 80, color: Colors.white.withOpacity(0.5)),
                 ),
               ),
             ),
@@ -245,20 +258,28 @@ class ChannelDetailScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(followers, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          Text(widget.followers, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           const Text('followers', style: TextStyle(color: Colors.grey, fontSize: 13)),
                         ],
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.snackbar('Channel', 'You followed $name', snackPosition: SnackPosition.BOTTOM);
+                          setState(() {
+                            isFollowing = !isFollowing;
+                          });
+                          if (isFollowing) {
+                            Get.snackbar('Channel', 'You followed ${widget.name}', snackPosition: SnackPosition.BOTTOM);
+                          } else {
+                            Get.snackbar('Channel', 'You unfollowed ${widget.name}', snackPosition: SnackPosition.BOTTOM);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: color,
-                          foregroundColor: Colors.white,
+                          backgroundColor: isFollowing ? Colors.grey[300] : widget.color,
+                          foregroundColor: isFollowing ? Colors.black : Colors.white,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
-                        child: const Text('Follow'),
+                        child: Text(isFollowing ? 'Following' : 'Follow'),
                       ),
                     ],
                   ),
@@ -266,7 +287,7 @@ class ChannelDetailScreen extends StatelessWidget {
                   const Text('Channel Description', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   const SizedBox(height: 8),
                   Text(
-                    'Stay updated with the latest from $name. We provide daily news, exclusive content, and community polls directly to your messenger.',
+                    'Stay updated with the latest from ${widget.name}. We provide daily news, exclusive content, and community polls directly to your messenger.',
                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
                   ),
                   const Divider(height: 48),
@@ -300,9 +321,9 @@ class ChannelDetailScreen extends StatelessWidget {
         children: [
           Row(
              children: [
-               CircleAvatar(backgroundColor: color.withOpacity(0.1), radius: 14, child: Icon(icon, color: color, size: 14)),
+               CircleAvatar(backgroundColor: widget.color.withOpacity(0.1), radius: 14, child: Icon(widget.icon, color: widget.color, size: 14)),
                const SizedBox(width: 8),
-               Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+               Text(widget.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                const Spacer(),
                const Text('Today', style: TextStyle(color: Colors.grey, fontSize: 11)),
              ],
@@ -315,13 +336,13 @@ class ChannelDetailScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.favorite_border, size: 16, color: Colors.grey),
+              const Icon(Icons.favorite_border, size: 16, color: Colors.grey),
               const SizedBox(width: 4),
-              Text('1.2K', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              const Text('1.2K', style: TextStyle(color: Colors.grey, fontSize: 12)),
               const SizedBox(width: 16),
-              Icon(Icons.share_outlined, size: 16, color: Colors.grey),
+              const Icon(Icons.share_outlined, size: 16, color: Colors.grey),
               const SizedBox(width: 4),
-              Text('45', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              const Text('45', style: TextStyle(color: Colors.grey, fontSize: 12)),
             ],
           ),
         ],
@@ -571,6 +592,10 @@ class MessengerCommunitiesScreen extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: _buildMessengerAppBar('Communities', context, actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Image.asset(AppAssets.communitiesIcon3d, width: 28, height: 28),
+          ),
           IconButton(icon: const Icon(Icons.search), onPressed: () {}),
         ]),
       ),
@@ -582,9 +607,9 @@ class MessengerCommunitiesScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: InkWell(
-                onTap: () {
-                   Get.snackbar('Coming Soon', 'Community creation will be available in next update.');
-                },
+                 onTap: () {
+                    Get.to(() => const CreateCommunityScreen());
+                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -610,7 +635,7 @@ class MessengerCommunitiesScreen extends StatelessWidget {
             
             const SizedBox(height: 20),
             _buildCommunitySectionHeader('DISCOVER'),
-            _buildDiscoveryListItem('Global News Network', '5M Members', Icons.public, Colors.blue),
+            _buildDiscoveryListItem('Global News Network', '5M Members', Icons.public, Colors.blue, assetPath: AppAssets.languageIcon3d),
             _buildDiscoveryListItem('Startup Founders', '85K Members', Icons.lightbulb, Colors.amber),
           ],
         ),
@@ -675,14 +700,21 @@ class MessengerCommunitiesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDiscoveryListItem(String name, String members, IconData icon, Color color) {
+  Widget _buildDiscoveryListItem(String name, String members, IconData icon, Color color, {String? assetPath}) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-      leading: CircleAvatar(backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color, size: 20)),
+      leading: CircleAvatar(
+        backgroundColor: color.withOpacity(0.1), 
+        child: assetPath != null 
+            ? Image.asset(assetPath, width: 20, height: 20)
+            : Icon(icon, color: color, size: 20)
+      ),
       title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
       subtitle: Text(members, style: const TextStyle(fontSize: 11)),
       trailing: ElevatedButton(
-        onPressed: () {}, 
+        onPressed: () {
+          Get.snackbar('Community', 'You joined $name!');
+        }, 
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue.withOpacity(0.1),
           foregroundColor: Colors.blue,
@@ -728,6 +760,9 @@ class MessengerGroupsScreen extends StatelessWidget {
       title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
       subtitle: Text(lastMsg, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Text(time, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+      onTap: () {
+        Get.to(() => GroupDetailScreen(name: name, avatar: avatar));
+      },
     );
   }
 }

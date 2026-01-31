@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'controllers/meeting_controller.dart';
+import '../../core/constants/app_assets.dart';
 
 class MeetingScreen extends StatelessWidget {
   const MeetingScreen({super.key});
@@ -36,7 +37,7 @@ class MeetingScreen extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.verified_user_outlined, size: 14, color: Colors.blue),
+                    Image.asset(AppAssets.securitySafeIcon3d, width: 14, height: 14),
                     const SizedBox(width: 8),
                     Text(
                       'SECURE & ENCRYPTED',
@@ -89,7 +90,6 @@ class MeetingScreen extends StatelessWidget {
                     Icons.videocam,
                     const Color(0xFFFE5722),
                     onTap: () => _onNewMeeting(context, controller),
-                    assetPath: 'assets/images/meeting_icon_3d.png',
                   ),
                   _buildActionCard(
                     'Join',
@@ -397,7 +397,6 @@ class MeetingScreen extends StatelessWidget {
               'Join the meeting immediately', 
               isDark,
               onTap: () => controller.startInstantMeeting(),
-              assetPath: 'assets/images/meeting_icon_3d.png',
             ),
             const SizedBox(height: 24),
             _buildModalOption(
